@@ -1,34 +1,35 @@
-{% extends "base.html" %}
-{% block content %}
-<header>
-  <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo">
-  <h1>Upload Video</h1>
-  <nav>
-    <a href="{{ url_for('home') }}">Trang chủ</a>
-    <a href="{{ url_for('logout') }}">Đăng xuất</a>
-  </nav>
-</header>
-
-<main>
-  <form method="POST" enctype="multipart/form-data">
-    <label>Tiêu đề:</label><br>
-    <input type="text" name="title" required><br><br>
-
-    <label>Thể loại:</label><br>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Video</title>
+</head>
+<body>
+  <h2>Đăng video mới</h2>
+  <form method="POST">
+    <input type="text" name="title" placeholder="Tên video" required><br>
+    <input type="url" name="url" placeholder="URL hoặc iframe" required><br>
     <select name="category" required>
       <option value="Hài">Hài</option>
-      <option value="Hành động">Hành động</option>
+      <option value="Phim Hành động">Phim Hành động</option>
       <option value="Hoạt hình">Hoạt hình</option>
+	  <option value="Nhạc">Nhạc</option>
+	  <option value="Phim viễn tưởng">Phim viễn tưởng</option>
+	  <option value="Phim ma">Phim ma</option>
+	  <option value="Câu chuyện">Câu chuyện</option>
+	  <option value="Tin tức">Tin tức</option>
       <option value="Ảnh">Ảnh</option>
     </select><br><br>
-
+    <button type="submit">Lọc</button>
+</form>
     <label>Chọn video để upload:</label><br>
     <input type="file" name="video"><br><br>
 
     <label>Hoặc nhúng link video (YouTube, v.v.):</label><br>
     <input type="text" name="url" placeholder="https://..."><br><br>
 
+    </select><br>
     <button type="submit">Tải lên</button>
   </form>
-</main>
-{% endblock %}
+  <a href="{{ url_for('index') }}">← Về trang chủ</a>
+</body>
+</html>

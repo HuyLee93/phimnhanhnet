@@ -1,97 +1,67 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from werkzeug.utils import secure_filename
-import os
+from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = 'lekoy_secret'
+app.secret_key = 'lekoy93'
 
-UPLOAD_FOLDER = 'static/uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# Admin mặc định
+ADMIN_USER = 'admin'
+ADMIN_PASS = 'lekoy93'
 
+# Danh sách video (tạm thời trong RAM)
 videos = []
-likes = {}
-comments = {}
 
-# Tài khoản admin mặc định
-ADMIN_USERNAME = 'admin'
-ADMIN_PASSWORD = 'lekoy93'
+# Hàm kiểm tra đăng nhập
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session or session['username'] != ADMIN_USER:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
+# Trang chính
 @app.route('/')
-def home():
-    query = request.args.get('q', '').lower()
-    category = request.args.get('category', '')
+def index():
+    search_query = request.args.get('search', '').lower()
+    selected_category = request.args.get('category', '')
 
-    filtered = []
-    for video in videos:
-        if query and query not in video['title'].lower():
-            continue
-        if category and category != video['category']:
-            continue
-        filtered.append(video)
+    filtered_videos = videos
+    if search_query:
+        filtered_videos = [v for v in filtered_videos if search_query in v['title'].lower()]
+    if selected_category:
+        filtered_videos = [v for v in filtered_videos if v['category'] == selected_category]
 
-    return render_template('index.html', videos=filtered, likes=likes, comments=comments)
+    categories = list(set(v['category'] for v in videos))
+    return render_template('index.html', videos=filtered_videos, categories=categories)
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = ''
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
-            session['admin'] = True
-            return redirect(url_for('upload'))
-        else:
-            error = 'Sai tài khoản hoặc mật khẩu'
-    return render_template('login.html', error=error)
-
-@app.route('/logout')
-def logout():
-    session.pop('admin', None)
-    return redirect(url_for('home'))
-
+# Trang upload
 @app.route('/upload', methods=['GET', 'POST'])
+@login_required
 def upload():
-    if not session.get('admin'):
-        return redirect(url_for('login'))
-
     if request.method == 'POST':
         title = request.form['title']
-        category = request.form['category']
         url = request.form['url']
-
-        video_file = request.files.get('video')
-        video_path = ''
-        if video_file and video_file.filename != '':
-            filename = secure_filename(video_file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            video_file.save(filepath)
-            video_path = filepath
-
-        videos.append({
-            'title': title,
-            'category': category,
-            'url': url,
-            'file': video_path
-        })
-        return redirect(url_for('home'))
-
+        category = request.form['category']
+        videos.append({'title': title, 'url': url, 'category': category})
+        return redirect(url_for('index'))
     return render_template('upload.html')
 
-@app.route('/like/<int:video_id>')
-def like(video_id):
-    likes[video_id] = likes.get(video_id, 0) + 1
-    return redirect(url_for('home'))
+# Trang đăng nhập
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        if request.form['username'] == ADMIN_USER and request.form['password'] == ADMIN_PASS:
+            session['username'] = ADMIN_USER
+            return redirect(url_for('upload'))
+    return render_template('login.html')
 
-@app.route('/comment/<int:video_id>', methods=['POST'])
-def comment(video_id):
-    content = request.form['comment']
-    if video_id not in comments:
-        comments[video_id] = []
-    comments[video_id].append(content)
-    return redirect(url_for('home'))
+# Đăng xuất
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('index'))
 
-import os
-
+# Khởi chạy
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host="0.0.0.0", port=port)
+    app.run(debug=True)
