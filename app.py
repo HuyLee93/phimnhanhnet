@@ -4,21 +4,21 @@ from flask import Flask, render_template, request, redirect, session
 app = Flask(__name__)
 app.secret_key = 'lekoysecret'
 
-DB_FILE = 'videos.json'
-
-# User giả lập
+# “Database” giả lập
+DATA_FILE = 'videos.json'
 users = {'admin': {'pw': 'lekoy93', 'role': 'admin'}}
 
-# Load video từ file nếu tồn tại
-if os.path.exists(DB_FILE):
-    with open(DB_FILE, 'r') as f:
-        videos = json.load(f)
-else:
-    videos = []
+def load_videos():
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return []
 
-def save_videos():
-    with open(DB_FILE, 'w') as f:
-        json.dump(videos, f, indent=2)
+def save_videos(videos):
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(videos, f, indent=2, ensure_ascii=False)
+
+videos = load_videos()
 
 def convert_embed(url):
     if re.search(r'youtu\.?be', url):
@@ -35,7 +35,7 @@ def convert_embed(url):
 def index():
     q = request.args.get('q', '').lower()
     cat = request.args.get('category', '')
-    filtered = [v for v in videos if v['approved']
+    filtered = [v for v in videos if v.get('approved', False)
                 and (q in v['title'].lower())
                 and (cat == '' or cat == v['category'])]
     return render_template('index.html', videos=filtered, user=session.get('user'))
@@ -60,7 +60,7 @@ def upload():
         return redirect('/login')
     if request.method=='POST':
         url = convert_embed(request.form['url'])
-        video = {
+        new_video = {
             'id': len(videos),
             'title': request.form['title'],
             'url': url,
@@ -71,25 +71,12 @@ def upload():
             'dislikes': 0,
             'comments': []
         }
-        videos.append(video)
-        save_videos()
+        videos.append(new_video)
+        save_videos(videos)
         return redirect('/')
     return render_template('upload.html')
 
 @app.route('/delete/<int:vid>')
 def delete(vid):
-    if session.get('user')=='admin':
-        global videos
-        videos = [v for v in videos if v['id'] != vid]
-        save_videos()
-    return redirect('/')
-
-@app.route('/like/<int:vid>')
-def like(vid):
-    videos[vid]['likes'] += 1
-    save_videos()
-    return redirect('/')
-
-@app.route('/dislike/<int:vid>')
-def dislike(vid):
-
+    global videos
+    if session.get('u
