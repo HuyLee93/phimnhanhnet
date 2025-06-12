@@ -1,99 +1,45 @@
-from flask import Flask, render_template, request, redirect, session
-from datetime import datetime
-import uuid
+from flask import Flask, render_template, request, redirect, session, url_for
+import re
 
 app = Flask(__name__)
-app.secret_key = 'lekoy93'
+app.secret_key = 'lekoy'
 
-# Giả lập cơ sở dữ liệu
+# Dữ liệu tạm
 videos = []
-users = {
-    'admin': {'password': 'lekoy93', 'role': 'admin'},
-    'guest': {'password': 'guest', 'role': 'guest'}
-}
+users = {'admin': {'password': 'lekoy93', 'role': 'admin'},
+         'guest': {'password': '123', 'role': 'guest'}}
 
-@app.route('/')
-def index():
-    q = request.args.get('q', '').lower()
-    category = request.args.get('category', '')
-    filtered = [v for v in videos if
-                (q in v['title'].lower()) and
-                (category == '' or v['category'] == category) and
-                v.get('approved', True)]
-    return render_template('index.html', videos=filtered, category=category, q=q)
+# 🔁 Hàm xử lý URL thành iframe nhúng
+def convert_url_to_embed(url):
+    if '<iframe' in url:
+        return url  # đã là iframe, giữ nguyên
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = ''
-    if request.method == 'POST':
-        u = request.form['username']
-        p = request.form['password']
-        if u in users and users[u]['password'] == p:
-            session['username'] = u
-            return redirect('/')
-        else:
-            error = 'Sai tài khoản hoặc mật khẩu'
-    return render_template('login.html', error=error)
+    # YouTube dạng youtu.be/abc
+    yt_match = re.match(r'https?://youtu\.be/([a-zA-Z0-9_-]+)', url)
+    if yt_match:
+        code = yt_match.group(1)
+        return f'<iframe width="300" height="170" src="https://www.youtube.com/embed/{code}" frameborder="0" allowfullscreen></iframe>'
 
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('/')
+    # YouTube dạng youtube.com/watch?v=abc
+    yt_watch = re.search(r'v=([a-zA-Z0-9_-]+)', url)
+    if 'youtube.com' in url and yt_watch:
+        code = yt_watch.group(1)
+        return f'<iframe width="300" height="170" src="https://www.youtube.com/embed/{code}" frameborder="0" allowfullscreen></iframe>'
 
+    # Facebook, Vimeo... hoặc link iframe không hợp lệ => thông báo lỗi hoặc giữ nguyên
+    return url  # fallback (bạn có thể thêm xử lý khác)
+
+# Trang tải lên video
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    if 'username' not in session:
-        return redirect('/login')
-    role = users[session['username']]['role']
-    if request.method == 'POST':
-        v = {
-            'id': str(uuid.uuid4()),
-            'title': request.form['title'],
-            'url': request.form['url'],
-            'category': request.form['category'],
-            'user': session['username'],
-            'approved': role == 'admin',
-            'likes': 0,
-            'dislikes': 0,
-            'comments': []
-        }
-        videos.append(v)
-        return redirect('/')
-    return render_template('upload.html')
-
-@app.route('/delete/<id>')
-def delete(id):
     if 'username' not in session or users[session['username']]['role'] != 'admin':
         return redirect('/login')
-    global videos
-    videos = [v for v in videos if v['id'] != id]
-    return redirect('/')
 
-@app.route('/like/<id>')
-def like(id):
-    for v in videos:
-        if v['id'] == id:
-            v['likes'] += 1
-            break
-    return redirect('/')
-
-@app.route('/dislike/<id>')
-def dislike(id):
-    for v in videos:
-        if v['id'] == id:
-            v['dislikes'] += 1
-            break
-    return redirect('/')
-
-@app.route('/comment/<id>', methods=['POST'])
-def comment(id):
-    text = request.form['comment']
-    user = session.get('username', 'Khách')
-    for v in videos:
-        if v['id'] == id:
-            v['comments'].append({'user': user, 'text': text})
-            break
-    return redirect('/')
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    if request.method == 'POST':
+        title = request.form['title']
+        raw_url = request.form['url']
+        category = request.form['category']
+        embed = convert_url_to_embed(raw_url)
+        videos.append({'title': title, 'url': embed, 'category': category, 'author': session['username']})
+        return redirect('/')
+    return render_template('upload.html')

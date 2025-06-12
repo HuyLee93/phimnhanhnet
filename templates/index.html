@@ -1,34 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
-<form method="get">
-  <input name="q" placeholder="Tìm kiếm..." value="{{q}}">
-  <select name="category">
-    <option value="">Tất cả thể loại</option>
-    {% for c in ['Hành động', 'Hài', 'Hoạt hình', 'Phim mới', 'Phim ma', 'Tin tức', 'Phim viễn tưởng', 'phim cổ', 'Nhạc hay', 'Video', 'Nhạc vàng', 'Nhạc trẻ'] %}
-      <option {% if category==c %}selected{% endif %}>{{c}}</option>
-    {% endfor %}
-  </select>
-  <button>Tìm</button>
-</form>
+<h2>📺 Danh sách video</h2>
+{% for video in videos %}
+  <div style="margin-bottom: 20px;">
+    <p><strong>{{ video.title }}</strong> - <em>{{ video.category }}</em></p>
+    {{ video.url | safe }}  {# hiển thị iframe đã xử lý #}
+  </div>
+{% endfor %}
+{% endblock %}
 
-<div class="videos">
-  {% for v in videos %}
-    <div class="video">
-      <h3>{{v.title}} - <small>{{v.category}}</small></h3>
-      <iframe width="300" height="170" src="{{v.url}}" allowfullscreen></iframe><br>
-      👍 {{v.likes}} 👎 {{v.dislikes}}
-      {% if session.username %}
-        | <a href="/like/{{v.id}}">Like</a> | <a href="/dislike/{{v.id}}">Dislike</a>
-        {% if session.username == v.user or users[session.username].role == 'admin' %}
-          | <a href="/delete/{{v.id}}">Xoá</a>
-        {% endif %}
-        <form method="post" action="/comment/{{v.id}}">
-          <input name="comment" placeholder="Bình luận..."><button>Gửi</button>
-        </form>
-      {% endif %}
-      {% for c in v.comments %}
-        <p><b>{{c.user}}</b>: {{c.text}}</p>
-      {% endfor %}
     </div>
   {% endfor %}
 </div>
