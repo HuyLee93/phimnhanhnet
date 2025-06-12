@@ -1,149 +1,31 @@
-/* Reset đơn giản */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(to bottom, #fefefe, #f5f5f5);
-    color: #333;
+    background: url('images/bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    background: rgba(0,0,0,0.6);
     padding: 20px;
+    margin: 50px auto;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 10px;
 }
 
-header {
-    background-color: #fff;
-    border-bottom: 2px solid #ddd;
-    padding: 15px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-}
-
-header .logo {
-    width: 60px;
-    height: auto;
-    margin-right: 15px;
-}
-
-header h1 {
-    font-size: 24px;
-    color: #d4af37; /* Vàng kim */
-    flex-grow: 1;
-}
-
-nav a {
-    text-decoration: none;
-    margin-left: 15px;
-    color: #555;
-    font-weight: bold;
-}
-
-main {
+.banner {
+    text-align: center;
     margin-top: 30px;
 }
 
-.video-card {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 15px;
+.banner img {
+    width: 80px;
+}
+
+.video-box {
+    margin-bottom: 40px;
+    background: rgba(255, 255, 255, 0.1);
     padding: 15px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.video-card h3 {
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.video-card video,
-.video-card iframe {
-    border-radius: 10px;
-    margin-bottom: 10px;
-}
-
-.video-card form input[type="text"] {
-    padding: 8px;
-    width: 60%;
-    border: 1px solid #ccc;
     border-radius: 8px;
-    margin-right: 5px;
-}
-
-.video-card button {
-    padding: 8px 14px;
-    background-color: #d4af37;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.video-card button:hover {
-    background-color: #bfa231;
-}
-
-.comments {
-    margin-top: 10px;
-    list-style: disc inside;
-    color: #666;
-}
-
-.login-box, .upload-box {
-    max-width: 500px;
-    margin: 50px auto;
-    background: #fff;
-    padding: 25px;
-    border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
-
-.login-box h2,
-.upload-box h2 {
-    margin-bottom: 20px;
-    text-align: center;
-    color: #333;
-}
-
-.login-box input,
-.upload-box input,
-.upload-box select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-}
-
-.upload-box input[type="file"] {
-    border: none;
-}
-
-.login-box button,
-.upload-box button {
-    width: 100%;
-    padding: 10px;
-    background-color: #d4af37;
-    border: none;
-    border-radius: 10px;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.login-box button:hover,
-.upload-box button:hover {
-    background-color: #c0982f;
-}
-
-.error {
-    color: red;
-    text-align: center;
-    margin-top: 10px;
 }
