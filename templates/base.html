@@ -1,20 +1,31 @@
-<!DOCTYPE html><html><head>
-  <meta charset="UTF-8"><title>Phimnhanh</title>
-  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
-</head><body style="font-family:Roboto;">
-<header>
-  <img src="{{ url_for('static',filename='images/logo.png') }}" height="50">
-  <form method="get" action="/">
-    <input name="q" placeholder="Tìm kiếm...">
-    <select name="category">
-      <option value="">Tất cả</option>
-      {% for opt in ['Hài','Hành động','Hoạt hình','Phim mới','Phim ma','Video nhạc','Video','Nhạc'] %}
-      <option>{{opt}}</option>{% endfor %}
-    </select><button>Tìm</button>
-  </form>
-  {% if user %}Xin chào {{user}} | <a href="{{url_for('logout')}}">Đăng xuất</a> | <a href="{{url_for('upload')}}">Đăng video</a>{% else %}<a href="{{url_for('login')}}">Đăng nhập</a>{% endif %}
-</header><main>{% block c %}{% endblock %}</main></body></html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <img src="/static/images/logo.png" alt="Logo" class="logo">
+        <h1>Phimnhanh.net – Vừa nhanh vừa nét</h1>
+        <nav>
+            <a href="/">Trang chủ</a>
+            {% if user and user.role == 'admin' %}
+                <a href="/upload">Đăng video</a>
+            {% endif %}
+            {% if user %}
+                <a href="/logout">Đăng xuất ({{ user.username }})</a>
+            {% else %}
+                <a href="/login">Đăng nhập</a>
+            {% endif %}
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
 
 
 

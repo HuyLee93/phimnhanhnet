@@ -1,9 +1,27 @@
-{% extends 'base.html' %}{% block c %}
-<h2>🚀 Đăng video</h2>
-<form method="post">
-  <input name="title" placeholder="Tiêu đề"><br>
-  <input name="url" placeholder="URL video hoặc Twitter"><br>
-  <select name="category">{% for c in ['Hài','Hành động','Hoạt hình','Phim mới','Phim ma','Video nhạc','Video','Nhạc'] %}<option>{{c}}</option>{% endfor %}</select><br>
-  <button>Gửi</button>
+{% extends "base.html" %}
+{% block content %}
+<h2>Đăng video mới</h2>
+<form method="post" enctype="multipart/form-data">
+    <input type="text" name="title" placeholder="Tiêu đề" required><br>
+    <select name="category" required>
+        <option value="">Chọn thể loại</option>
+        <option value="hài">Hài</option>
+        <option value="hành động">Hành động</option>
+        <option value="hoạt hình">Hoạt hình</option>
+		<option value="Video">Video</option>
+		<option value="Video nhạc">Video nhạc</option>
+		<option value="Nhạc">Nhạc</option>
+		<option value="Tin tức">Tin tức</option>
+		<option value="Phim hay">Phim hay</option>
+		<option value="Phim cổ">Phim cổ</option>
+		<option value="Phim mới">Phim mới</option>
+        <option value="ảnh">Ảnh</option>
+    </select><br>
+    <label>Hoặc nhập URL video (YouTube, Facebook...):</label><br>
+    <input type="url" name="url" placeholder="https://..." style="width: 100%;"><br>
+    <label>Hoặc tải file video lên (mp4):</label><br>
+    <input type="file" name="file"><br>
+    <button type="submit">Đăng video</button>
 </form>
 {% endblock %}
+

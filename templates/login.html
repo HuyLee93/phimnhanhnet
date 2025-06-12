@@ -1,8 +1,12 @@
-{% extends 'base.html' %}{% block c %}
-<h2>🔐 Đăng nhập</h2>
+{% extends "base.html" %}
+{% block content %}
+<h2>Đăng nhập</h2>
 <form method="post">
-  <input name="username" placeholder="User"><br>
-  <input name="password" type="password" placeholder="Password"><br>
-  <button>Đăng nhập</button>
+    <input type="text" name="username" placeholder="Tên đăng nhập" required>
+    <input type="password" name="password" placeholder="Mật khẩu" required>
+    <button type="submit">Đăng nhập</button>
 </form>
+{% if error %}
+<p style="color: red;">{{ error }}</p>
+{% endif %}
 {% endblock %}

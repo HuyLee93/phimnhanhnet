@@ -1,16 +1,58 @@
-{% extends 'base.html' %}{% block c %}
-<div class="grid">
-  {% for v in videos %}
-    <div class="card">
-      <a href="{{url_for('watch',vid=v.id)}}">
-        <iframe src="{{v.url}}" frameborder="0" allowfullscreen></iframe>
-      </a>
-      <h4>{{v.title}}</h4><small>{{v.category}}</small><br>
-      👍 {{v.likes}} 👎 {{v.dislikes}}<br>
-      {% if user=='admin' %}
-        <a href="{{url_for('delete',vid=v.id)}}">🗑️ Xóa</a>
-      {% endif %}
+{% extends "base.html" %}
+{% block content %}
+<form method="get" action="/">
+    <input type="text" name="q" placeholder="Tìm kiếm..." value="{{ request.args.get('q', '') }}">
+    <select name="category">
+        <option value="">Tất cả thể loại</option>
+        <option value="hài">Hài</option>
+        <option value="hành động">Hành động</option>
+        <option value="hoạt hình">Hoạt hình</option>
+        <option value="Video">Video</option>
+		<option value="Video nhạc">Video nhạc</option>
+		<option value="Nhạc">Nhạc</option>
+		<option value=Tin tức">Tin tức</option>
+		<option value="Phim hay">Phim hay</option>
+		<option value="Phim cổ">Phim cổ</option>
+		<option value="Phim mới">Phim mới</option>
+		<option value="ảnh">Ảnh</option>
+    </select>
+    <button type="submit">Tìm</button>
+</form>
+
+<div class="video-list">
+    {% for video in videos %}
+    <div class="video-card">
+        <h3>{{ video.title }}</h3>
+        <div class="player">
+            {% if video.url.startswith('http') %}
+                <iframe src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
+            {% else %}
+                <video controls>
+                    <source src="{{ video.url }}" type="video/mp4">
+                    Trình duyệt không hỗ trợ video.
+                </video>
+            {% endif %}
+        </div>
+        <p>Thể loại: {{ video.category }}</p>
+        <p>
+            <a href="/like/{{ loop.index0 }}">👍 {{ video.likes }}</a>
+            <a href="/dislike/{{ loop.index0 }}">👎 {{ video.dislikes }}</a>
+            {% if user and user.role == 'admin' %}
+                <a href="/delete/{{ loop.index0 }}">🗑️ Xoá</a>
+            {% endif %}
+        </p>
+        <form method="post" action="/comment/{{ loop.index0 }}">
+            <input type="text" name="comment" placeholder="Bình luận...">
+            <button type="submit">Gửi</button>
+        </form>
+        <ul>
+            {% for cmt in video.comments %}
+                <li>{{ cmt }}</li>
+            {% endfor %}
+        </ul>
     </div>
-  {% endfor %}
+    {% else %}
+        <p>Không có video nào.</p>
+    {% endfor %}
 </div>
 {% endblock %}
