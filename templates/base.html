@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Phimnhanh.net</title>
+  <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <div class="banner">
+  <header>
     <img src="/static/images/logo.png" height="50">
-    <span class="slogan">Phimnhanh.net – Vừa nhanh vừa nét</span>
-  </div>
-  {% if session.username %}
-    <div class="menu">Xin chào {{session.username}} |
-      <a href="/">Trang chủ</a> |
-      <a href="/upload">Đăng video</a> |
-      <a href="/logout">Đăng xuất</a>
-    </div>
-  {% else %}
-    <div class="menu"><a href="/login">Đăng nhập</a></div>
-  {% endif %}
-  <div class="main">{% block content %}{% endblock %}</div>
+    <marquee>Lê kòy xin chào các bạn</marquee>
+    {% if username %}
+      <p>Xin chào {{ username }} | <a href="/logout">Đăng xuất</a> | <a href="/upload">Tải lên</a></p>
+    {% else %}
+      <a href="/login">Đăng nhập</a>
+    {% endif %}
+    <form method="get" action="/">
+      <input name="q" placeholder="Tìm kiếm...">
+      <select name="category">
+        <option value="">Tất cả</option>
+        <option>Hài</option><option>Hành động</option><option>Hoạt hình</option>
+      </select>
+      <button>Tìm</button>
+    </form>
+  </header>
+  {% block content %}{% endblock %}
 </body>
 </html>
+
 

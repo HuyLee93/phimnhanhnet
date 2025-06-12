@@ -1,15 +1,25 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>📺 Danh sách video</h2>
-{% for video in videos %}
-  <div style="margin-bottom: 20px;">
-    <p><strong>{{ video.title }}</strong> - <em>{{ video.category }}</em></p>
-    {{ video.url | safe }}  {# hiển thị iframe đã xử lý #}
+<h2>📺 Video mới nhất</h2>
+{% for v in videos %}
+  <div class="video-card">
+    <h3>{{ v.title }} ({{ v.category }})</h3>
+    <iframe src="{{ v.url }}" frameborder="0" allowfullscreen></iframe><br>
+    👍 {{ v.likes }} 👎 {{ v.dislikes }}
+    <a href="/like/{{ loop.index0 }}">Like</a>
+    <a href="/dislike/{{ loop.index0 }}">Dislike</a>
+    {% if username == v.user or users[username]['role'] == 'admin' %}
+      <a href="/delete/{{ loop.index0 }}">🗑️ Xóa</a>
+    {% endif %}
+    <form method="post" action="/comment/{{ loop.index0 }}">
+      <input name="comment" placeholder="Bình luận...">
+      <button>Gửi</button>
+    </form>
+    <ul>
+      {% for c in v.comments %}
+        <li><strong>{{ c.user }}:</strong> {{ c.text }}</li>
+      {% endfor %}
+    </ul>
   </div>
 {% endfor %}
-{% endblock %}
-
-    </div>
-  {% endfor %}
-</div>
 {% endblock %}
