@@ -1,23 +1,24 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<h2>Đăng video mới</h2>
+<h2>📤 Tải lên video mới</h2>
 <form method="post">
-    <input type="text" name="title" placeholder="Tiêu đề" required><br>
-    <textarea name="description" placeholder="Mô tả" required></textarea><br>
-    <select name="category" required>
-        <option value="Hài">Hài</option>
-        <option value="Hành động">Hành động</option>
-        <option value="Hoạt hình">Hoạt hình</option>
-        <option value="Video">Video</option>
-		<option value="Nhạc vàng">Nhạc vàng</option>
-		<option value="Nhạc trẻ">Nhạc trẻ</option>
-		<option value="Phim ma">Phim ma</option>
-		<option value="Viễn tưởng">Viễn tưởng</option>
-		<option value="Phim ca nhạc">Phim ca nhạc</option>
-		<option value="Phim mới">Phim mới</option>
-		<option value="tiktok">Tiktok</option>
-    </select><br>
-    <input type="url" name="url" placeholder="Link video (YouTube...)" required><br>
-    <button type="submit">Đăng</button>
+  <input name="title" placeholder="Tiêu đề"><br>
+  <input name="url" placeholder="Nhúng link (iframe hoặc embed)"><br>
+  <select name="category">
+    <option value="">Tất cả</option>
+    <option>Hành động</option>
+    <option>Hài</option>
+    <option>Hoạt hình</option>
+    <option>Phim mới</option>
+	<option>>Phim ma</option>
+	<option>>Tin tức</option>
+	<option>>Phim viễn tưởng</option>
+	<option>>phim cổ</option>
+	<option>>Nhạc hay</option>
+	<option>>Video</option>
+	<option>>Nhạc vàng</option>
+	<option>>Nhạc trẻ</option>
+  </select><br>
+  <button>Gửi</button>
 </form>
 {% endblock %}

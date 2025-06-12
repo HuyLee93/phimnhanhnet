@@ -1,17 +1,25 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-    <div class="banner">
-        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
-        <h1>Phimnhanh.net – Vừa nhanh vừa nét</h1>
-    </div>
-    <div class="container">
-        {% block content %}{% endblock %}
-    </div>
+<body style="background-image: url('/static/images/bg.jpg');">
+  <header>
+    <img src="/static/images/logo.png" alt="Logo" width="80">
+    <h1>Phimnhanh.net – Vừa nhanh vừa nét</h1>
+    {% if session.username %}
+      <span>Xin chào {{ session.username }}</span>
+      <a href="/logout">Đăng xuất</a>
+      {% if session.role == 'admin' or session.role == 'guest' %}
+        <a href="/upload">Tải lên</a>
+      {% endif %}
+    {% else %}
+      <a href="/login">Đăng nhập</a>
+    {% endif %}
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
 </body>
 </html>

@@ -1,30 +1,45 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-    <form method="get">
-        <input type="text" name="search" placeholder="Tìm kiếm..." value="{{ request.args.get('search', '') }}">
-        <select name="category">
-            <option value="">Tất cả thể loại</option>
-            {% for cat in categories %}
-                <option value="{{ cat }}" {% if request.args.get('category') == cat %}selected{% endif %}>{{ cat }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Lọc</button>
+<h2>🎬 Danh sách video</h2>
+
+<form method="get" action="/">
+  <input type="text" name="q" placeholder="Tìm kiếm...">
+  <select name="category">
+    <option value="">Tất cả</option>
+    <option>Hành động</option>
+    <option>Hài</option>
+    <option>Hoạt hình</option>
+    <option>Phim mới</option>
+	<option>>Phim ma</option>
+	<option>>Tin tức</option>
+	<option>>Phim viễn tưởng</option>
+	<option>>phim cổ</option>
+	<option>>Nhạc hay</option>
+	<option>>Video</option>
+	<option>>Nhạc vàng</option>
+	<option>>Nhạc trẻ</option>
+  </select>
+  <button>Tìm</button>
+</form>
+
+<div class="video-grid">
+  {% for v in videos %}
+  <div class="video-card">
+    <iframe src="{{ v.url }}" frameborder="0" allowfullscreen></iframe>
+    <h4>{{ v.title }}</h4>
+    <p>Thể loại: {{ v.category }}</p>
+    <p>👍 {{ v.likes }}</p>
+    <form action="/like/{{ v.id }}"><button>Like</button></form>
+    <form action="/comment/{{ v.id }}" method="post">
+      <input name="comment" placeholder="Bình luận">
     </form>
-
-    <a href="{{ url_for('upload') }}">➕ Đăng video</a>
-
-    {% for video in videos %}
-        <div class="video-box">
-            <h2>{{ video.title }}</h2>
-            <p><strong>Thể loại:</strong> {{ video.category }}</p>
-            <p>{{ video.description }}</p>
-            {% if "youtube.com" in video.url %}
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video.url.split('v=')[-1] }}" frameborder="0" allowfullscreen></iframe>
-            {% else %}
-                <a href="{{ video.url }}" target="_blank">Xem video</a>
-            {% endif %}
-        </div>
-    {% else %}
-        <p>Không có video nào.</p>
+    {% for c in v.comments %}
+    <small>{{ c.author }}: {{ c.text }}</small><br>
     {% endfor %}
+    {% if session.role == 'admin' %}
+    <a href="/delete/{{ v.id }}">🗑 Xoá</a>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
 {% endblock %}
