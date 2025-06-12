@@ -1,45 +1,35 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>🎬 Danh sách video</h2>
-
-<form method="get" action="/">
-  <input type="text" name="q" placeholder="Tìm kiếm...">
+<form method="get">
+  <input name="q" placeholder="Tìm kiếm..." value="{{q}}">
   <select name="category">
-    <option value="">Tất cả</option>
-    <option>Hành động</option>
-    <option>Hài</option>
-    <option>Hoạt hình</option>
-    <option>Phim mới</option>
-	<option>>Phim ma</option>
-	<option>>Tin tức</option>
-	<option>>Phim viễn tưởng</option>
-	<option>>phim cổ</option>
-	<option>>Nhạc hay</option>
-	<option>>Video</option>
-	<option>>Nhạc vàng</option>
-	<option>>Nhạc trẻ</option>
+    <option value="">Tất cả thể loại</option>
+    {% for c in ['Hành động', 'Hài', 'Hoạt hình', 'Phim mới', 'Phim ma', 'Tin tức', 'Phim viễn tưởng', 'phim cổ', 'Nhạc hay', 'Video', 'Nhạc vàng', 'Nhạc trẻ'] %}
+      <option {% if category==c %}selected{% endif %}>{{c}}</option>
+    {% endfor %}
   </select>
   <button>Tìm</button>
 </form>
 
-<div class="video-grid">
+<div class="videos">
   {% for v in videos %}
-  <div class="video-card">
-    <iframe src="{{ v.url }}" frameborder="0" allowfullscreen></iframe>
-    <h4>{{ v.title }}</h4>
-    <p>Thể loại: {{ v.category }}</p>
-    <p>👍 {{ v.likes }}</p>
-    <form action="/like/{{ v.id }}"><button>Like</button></form>
-    <form action="/comment/{{ v.id }}" method="post">
-      <input name="comment" placeholder="Bình luận">
-    </form>
-    {% for c in v.comments %}
-    <small>{{ c.author }}: {{ c.text }}</small><br>
-    {% endfor %}
-    {% if session.role == 'admin' %}
-    <a href="/delete/{{ v.id }}">🗑 Xoá</a>
-    {% endif %}
-  </div>
+    <div class="video">
+      <h3>{{v.title}} - <small>{{v.category}}</small></h3>
+      <iframe width="300" height="170" src="{{v.url}}" allowfullscreen></iframe><br>
+      👍 {{v.likes}} 👎 {{v.dislikes}}
+      {% if session.username %}
+        | <a href="/like/{{v.id}}">Like</a> | <a href="/dislike/{{v.id}}">Dislike</a>
+        {% if session.username == v.user or users[session.username].role == 'admin' %}
+          | <a href="/delete/{{v.id}}">Xoá</a>
+        {% endif %}
+        <form method="post" action="/comment/{{v.id}}">
+          <input name="comment" placeholder="Bình luận..."><button>Gửi</button>
+        </form>
+      {% endif %}
+      {% for c in v.comments %}
+        <p><b>{{c.user}}</b>: {{c.text}}</p>
+      {% endfor %}
+    </div>
   {% endfor %}
 </div>
 {% endblock %}

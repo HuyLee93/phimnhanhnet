@@ -1,25 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
+  <title>Phimnhanh.net</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
-<body style="background-image: url('/static/images/bg.jpg');">
-  <header>
-    <img src="/static/images/logo.png" alt="Logo" width="80">
-    <h1>Phimnhanh.net – Vừa nhanh vừa nét</h1>
-    {% if session.username %}
-      <span>Xin chào {{ session.username }}</span>
+<body>
+  <div class="banner">
+    <img src="/static/images/logo.png" height="50">
+    <span class="slogan">Phimnhanh.net – Vừa nhanh vừa nét</span>
+  </div>
+  {% if session.username %}
+    <div class="menu">Xin chào {{session.username}} |
+      <a href="/">Trang chủ</a> |
+      <a href="/upload">Đăng video</a> |
       <a href="/logout">Đăng xuất</a>
-      {% if session.role == 'admin' or session.role == 'guest' %}
-        <a href="/upload">Tải lên</a>
-      {% endif %}
-    {% else %}
-      <a href="/login">Đăng nhập</a>
-    {% endif %}
-  </header>
-  <main>
-    {% block content %}{% endblock %}
-  </main>
+    </div>
+  {% else %}
+    <div class="menu"><a href="/login">Đăng nhập</a></div>
+  {% endif %}
+  <div class="main">{% block content %}{% endblock %}</div>
 </body>
 </html>
+
