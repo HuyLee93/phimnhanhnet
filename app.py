@@ -1,12 +1,24 @@
-import re
-from flask import Flask, render_template, request, redirect, session, url_for
+import re, json, os
+from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
 app.secret_key = 'lekoysecret'
 
-# “Database” giả lập
-videos = []
+DB_FILE = 'videos.json'
+
+# User giả lập
 users = {'admin': {'pw': 'lekoy93', 'role': 'admin'}}
+
+# Load video từ file nếu tồn tại
+if os.path.exists(DB_FILE):
+    with open(DB_FILE, 'r') as f:
+        videos = json.load(f)
+else:
+    videos = []
+
+def save_videos():
+    with open(DB_FILE, 'w') as f:
+        json.dump(videos, f, indent=2)
 
 def convert_embed(url):
     if re.search(r'youtu\.?be', url):
@@ -48,46 +60,36 @@ def upload():
         return redirect('/login')
     if request.method=='POST':
         url = convert_embed(request.form['url'])
-        videos.append({
+        video = {
             'id': len(videos),
             'title': request.form['title'],
             'url': url,
             'category': request.form['category'],
             'user': session['user'],
             'approved': session['user']=='admin',
-            'likes':0,'dislikes':0,'comments':[]
-        })
+            'likes': 0,
+            'dislikes': 0,
+            'comments': []
+        }
+        videos.append(video)
+        save_videos()
         return redirect('/')
     return render_template('upload.html')
 
 @app.route('/delete/<int:vid>')
 def delete(vid):
     if session.get('user')=='admin':
-        videos[:] = [v for v in videos if v['id'] != vid]
+        global videos
+        videos = [v for v in videos if v['id'] != vid]
+        save_videos()
     return redirect('/')
 
 @app.route('/like/<int:vid>')
 def like(vid):
     videos[vid]['likes'] += 1
+    save_videos()
     return redirect('/')
 
 @app.route('/dislike/<int:vid>')
 def dislike(vid):
-    videos[vid]['dislikes'] += 1
-    return redirect('/')
 
-@app.route('/comment/<int:vid>', methods=['POST'])
-def comment(vid):
-    name=session.get('user','Khách')
-    videos[vid]['comments'].append({'user':name,'txt':request.form['comment']})
-    return redirect('/')
-
-@app.route('/watch/<int:vid>')
-def watch(vid):
-    return render_template('video.html', video=videos[vid])
-
-@app.route('/ping')
-def ping():
-    return 'pong'
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
