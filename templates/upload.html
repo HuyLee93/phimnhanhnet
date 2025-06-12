@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+  <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo">
+  <h1>Upload Video</h1>
+  <nav>
+    <a href="{{ url_for('home') }}">Trang chủ</a>
+    <a href="{{ url_for('logout') }}">Đăng xuất</a>
+  </nav>
+</header>
+
+<main>
+  <form method="POST" enctype="multipart/form-data">
+    <label>Tiêu đề:</label><br>
+    <input type="text" name="title" required><br><br>
+
+    <label>Thể loại:</label><br>
+    <select name="category" required>
+      <option value="Hài">Hài</option>
+      <option value="Hành động">Hành động</option>
+      <option value="Hoạt hình">Hoạt hình</option>
+      <option value="Ảnh">Ảnh</option>
+    </select><br><br>
+
+    <label>Chọn video để upload:</label><br>
+    <input type="file" name="video"><br><br>
+
+    <label>Hoặc nhúng link video (YouTube, v.v.):</label><br>
+    <input type="text" name="url" placeholder="https://..."><br><br>
+
+    <button type="submit">Tải lên</button>
+  </form>
+</main>
+{% endblock %}

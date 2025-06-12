@@ -1,36 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+  <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo">
+  <h1>Phimnhanh.net – Vừa nhanh vừa nét</h1>
+  <nav>
+    {% if session.get('admin') %}
+    <a href="{{ url_for('upload') }}">Upload</a>
+    <a href="{{ url_for('logout') }}">Đăng xuất</a>
+    {% else %}
+    <a href="{{ url_for('login') }}">Đăng nhập</a>
+    {% endif %}
+  </nav>
+</header>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
-    <style>
-        body {
-            background: url('/static/ga.jpg') no-repeat center center fixed;
-            background-size: cover;
-            color: white;
-            text-align: center;
-            font-family: Arial, sans-serif;
-        }
-        .marquee {
-            position: absolute;
-            width: 100%;
-            bottom: 10px;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-        .marquee div {
-            display: inline-block;
-            padding-left: 100%;
-            animation: marquee 15s linear infinite;
-        }
-        @keyframes marquee {
-            from { transform: translateX(0%); }
-            to { transform: translateX(-100%); }
-        }
-    </style>
-</head>
-<body>
-    <h1>Chào mừng đến với Phimnhanh.net</h1>
-    <div class="marquee"><div>Lê kòy xin chào các bạn</div></div>
-</body>
-</html>
+<form method="GET" action="{{ url_for('home') }}" class="search-filter">
+  <input type="text" name="q" placeholder="Tìm video..." value="{{ request.args.get('q', '') }}">
+  <select name="category">
+    <option value="">-- Tất cả thể loại --</option>
+    <option value="Hài" {% if request.args.get('category') == 'Hài' %}selected{% endif %}>Hài</option>
+    <option value="Hành động" {% if request.args.get('category') == 'Hành động' %}selected{% endif %}>Hành động</option>
+    <option value="Hoạt hình" {% if request.args.get('category') == 'Hoạt hình' %}selected{% endif %}>Hoạt hình</option>
+    <option value="Ảnh" {% if request.args.get('category') == 'Ảnh' %}selected{% endif %}>Ảnh</option>
+  </select>
+  <button type="submit">Tìm</button>
+</form>
+
+<main>
+  {% for video in videos %}
+  <div class="video-card">
+    <h3>{{ video.title }} <small style="font-weight: normal; color: #999">({{ video.category }})</small></h3>
+
+    {% if video.file %}
+    <video controls width="100%">
+      <source src="/{{ video.file }}" type="video/mp4">
+    </video>
+    {% elif video.url %}
+    <iframe width="100%" height="315" src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('comment', video_id=loop.index0) }}">
+      <input type="text" name="comment" placeholder="Nhập bình luận...">
+      <button type="submit">Bình luận</button>
+    </form>
+
+    <p><a href="{{ url_for('like', video_id=loop.index0) }}">👍 Thích</a> ({{ likes.get(loop.index0, 0) }})</p>
+
+    <ul class="comments">
+      {% for cmt in comments.get(loop.index0, []) %}
+      <li>{{ cmt }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% else %}
+  <p>Chưa có video nào.</p>
+  {% endfor %}
+</main>
+{% endblock %}

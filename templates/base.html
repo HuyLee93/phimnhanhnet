@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Phimnhanh.net</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto&display=swap">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('{{ url_for('static', filename='images/bg.jpg') }}') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+    header {
+      background: rgba(0,0,0,0.7);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      height: 60px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    nav a {
+      color: #fff;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .search-filter {
+      background: rgba(0,0,0,0.6);
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    main {
+      padding: 20px;
+    }
+    .video-card {
+      background: rgba(0,0,0,0.6);
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 10px;
+    }
+    input, select, button {
+      padding: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+    .comments {
+      list-style: none;
+      padding-left: 0;
+    }
+    .comments li {
+      padding: 4px 0;
+      border-bottom: 1px solid #555;
+    }
+  </style>
+</head>
+<body>
+  {% block content %}{% endblock %}
+</body>
+</html>
