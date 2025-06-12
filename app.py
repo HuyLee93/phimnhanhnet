@@ -79,4 +79,7 @@ def upload():
 @app.route('/delete/<int:vid>')
 def delete(vid):
     global videos
-    if session.get('u
+    if session.get('user') == 'admin':
+        videos = [v for v in videos if v['id'] != vid]
+        save_videos(videos)
+    return redirect('/')
