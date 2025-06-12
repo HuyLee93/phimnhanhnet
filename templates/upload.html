@@ -1,35 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Upload Video</title>
-</head>
-<body>
-  <h2>Đăng video mới</h2>
-  <form method="POST">
-    <input type="text" name="title" placeholder="Tên video" required><br>
-    <input type="url" name="url" placeholder="URL hoặc iframe" required><br>
+{% extends "base.html" %}
+{% block content %}
+<h2>Đăng video mới</h2>
+<form method="post">
+    <input type="text" name="title" placeholder="Tiêu đề" required><br>
+    <textarea name="description" placeholder="Mô tả" required></textarea><br>
     <select name="category" required>
-      <option value="Hài">Hài</option>
-      <option value="Phim Hành động">Phim Hành động</option>
-      <option value="Hoạt hình">Hoạt hình</option>
-	  <option value="Nhạc">Nhạc</option>
-	  <option value="Phim viễn tưởng">Phim viễn tưởng</option>
-	  <option value="Phim ma">Phim ma</option>
-	  <option value="Câu chuyện">Câu chuyện</option>
-	  <option value="Tin tức">Tin tức</option>
-      <option value="Ảnh">Ảnh</option>
-    </select><br><br>
-    <button type="submit">Lọc</button>
-</form>
-    <label>Chọn video để upload:</label><br>
-    <input type="file" name="video"><br><br>
-
-    <label>Hoặc nhúng link video (YouTube, v.v.):</label><br>
-    <input type="text" name="url" placeholder="https://..."><br><br>
-
+        <option value="Hài">Hài</option>
+        <option value="Hành động">Hành động</option>
+        <option value="Hoạt hình">Hoạt hình</option>
+        <option value="Video">Video</option>
+		<option value="Nhạc vàng">Nhạc vàng</option>
+		<option value="Nhạc trẻ">Nhạc trẻ</option>
+		<option value="Phim ma">Phim ma</option>
+		<option value="Viễn tưởng">Viễn tưởng</option>
+		<option value="Phim ca nhạc">Phim ca nhạc</option>
+		<option value="Phim mới">Phim mới</option>
+		<option value="tiktok">Tiktok</option>
     </select><br>
-    <button type="submit">Tải lên</button>
-  </form>
-  <a href="{{ url_for('index') }}">← Về trang chủ</a>
-</body>
-</html>
+    <input type="url" name="url" placeholder="Link video (YouTube...)" required><br>
+    <button type="submit">Đăng</button>
+</form>
+{% endblock %}

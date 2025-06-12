@@ -1,33 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
-</head>
-<body>
-  <h1>Phimnhanh.net – Vừa nhanh vừa nét</h1>
+{% extends "base.html" %}
+{% block content %}
+    <form method="get">
+        <input type="text" name="search" placeholder="Tìm kiếm..." value="{{ request.args.get('search', '') }}">
+        <select name="category">
+            <option value="">Tất cả thể loại</option>
+            {% for cat in categories %}
+                <option value="{{ cat }}" {% if request.args.get('category') == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Lọc</button>
+    </form>
 
-  <!-- Tìm kiếm + lọc thể loại -->
-  <form method="GET">
-    <input type="text" name="search" placeholder="Tìm kiếm...">
-    <select name="category">
-      <option value="">-- Tất cả thể loại --</option>
-      {% for cat in categories %}
-        <option value="{{ cat }}">{{ cat }}</option>
-      {% endfor %}
-    </select>
-    <button type="submit">Lọc</button>
-  </form>
+    <a href="{{ url_for('upload') }}">➕ Đăng video</a>
 
-  <!-- Danh sách video -->
-  {% for video in videos %}
-    <div>
-      <h3>{{ video.title }}</h3>
-      <p><strong>Thể loại:</strong> {{ video.category }}</p>
-      <div>{% autoescape false %}{{ video.url }}{% endautoescape %}</div>
-    </div>
-    <hr>
-  {% endfor %}
-
-  <a href="{{ url_for('upload') }}">➕ Tải video</a>
-</body>
-</html>
+    {% for video in videos %}
+        <div class="video-box">
+            <h2>{{ video.title }}</h2>
+            <p><strong>Thể loại:</strong> {{ video.category }}</p>
+            <p>{{ video.description }}</p>
+            {% if "youtube.com" in video.url %}
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video.url.split('v=')[-1] }}" frameborder="0" allowfullscreen></iframe>
+            {% else %}
+                <a href="{{ video.url }}" target="_blank">Xem video</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>Không có video nào.</p>
+    {% endfor %}
+{% endblock %}
