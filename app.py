@@ -1,85 +1,135 @@
-import re, json, os
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, url_for, session
+from werkzeug.utils import secure_filename
+import os
+import json
+import traceback
+from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = 'lekoysecret'
+app.secret_key = 'lekoy93'
 
-# “Database” giả lập
-DATA_FILE = 'videos.json'
-users = {'admin': {'pw': 'lekoy93', 'role': 'admin'}}
+UPLOAD_FOLDER = 'static/uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-def load_videos():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return []
+DATA_FILE = 'data.json'
 
-def save_videos(videos):
-    with open(DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(videos, f, indent=2, ensure_ascii=False)
+# Tạo dữ liệu mặc định nếu chưa tồn tại
+if not os.path.exists(DATA_FILE):
+    with open(DATA_FILE, 'w') as f:
+        json.dump({'videos': [], 'users': [
+            {'username': 'admin', 'password': 'lekoy93', 'role': 'admin'}
+        ]}, f)
 
-videos = load_videos()
+# Load dữ liệu
+with open(DATA_FILE) as f:
+    data = json.load(f)
 
-def convert_embed(url):
-    if re.search(r'youtu\.?be', url):
-        vid = re.findall(r'(?:v=|\.be/)([^&?/]+)', url)[0]
-        return f"https://www.youtube.com/embed/{vid}"
-    if 'vimeo.com' in url:
-        vid = url.rsplit('/', 1)[-1]
-        return f"https://player.vimeo.com/video/{vid}"
-    if 'facebook.com' in url:
-        return f"https://www.facebook.com/plugins/video.php?href={url}"
-    return url
+videos = data.get('videos', [])
+users = data.get('users', [])
+
+def save_data():
+    with open(DATA_FILE, 'w') as f:
+        json.dump({'videos': videos, 'users': users}, f, indent=4)
 
 @app.route('/')
 def index():
-    q = request.args.get('q', '').lower()
-    cat = request.args.get('category', '')
-    filtered = [v for v in videos if v.get('approved', False)
-                and (q in v['title'].lower())
-                and (cat == '' or cat == v['category'])]
+    keyword = request.args.get('q', '').lower()
+    category = request.args.get('category', '')
+    filtered = [
+        v for v in videos
+        if (keyword in v['title'].lower()) and (category in v['category'] if category else True)
+    ]
     return render_template('index.html', videos=filtered, user=session.get('user'))
 
-@app.route('/login', methods=['GET','POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method=='POST':
-        u, p = request.form['username'], request.form['password']
-        if u in users and users[u]['pw'] == p:
-            session['user'] = u
-        return redirect('/')
-    return render_template('login.html')
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        for user in users:
+            if user['username'] == username and user['password'] == password:
+                session['user'] = user
+                return redirect('/')
+        error = 'Sai tài khoản hoặc mật khẩu'
+    return render_template('login.html', error=error)
 
 @app.route('/logout')
 def logout():
     session.pop('user', None)
     return redirect('/')
 
-@app.route('/upload', methods=['GET','POST'])
+@app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    if 'user' not in session:
-        return redirect('/login')
-    if request.method=='POST':
-        url = convert_embed(request.form['url'])
-        new_video = {
-            'id': len(videos),
-            'title': request.form['title'],
-            'url': url,
-            'category': request.form['category'],
-            'user': session['user'],
-            'approved': session['user']=='admin',
-            'likes': 0,
-            'dislikes': 0,
-            'comments': []
-        }
-        videos.append(new_video)
-        save_videos(videos)
-        return redirect('/')
-    return render_template('upload.html')
+    if 'user' not in session or session['user']['role'] != 'admin':
+        return redirect(url_for('login'))
 
-@app.route('/delete/<int:vid>')
-def delete(vid):
-    global videos
-    if session.get('user') == 'admin':
-        videos = [v for v in videos if v['id'] != vid]
-        save_videos(videos)
+    if request.method == 'POST':
+        try:
+            title = request.form.get('title')
+            category = request.form.get('category')
+            url = request.form.get('url')
+            file = request.files.get('file')
+
+            # Nếu có file upload
+            if file and file.filename:
+                filename = secure_filename(file.filename)
+                filepath = os.path.join(UPLOAD_FOLDER, filename)
+                file.save(filepath)
+                url = '/' + filepath  # dùng đường dẫn nội bộ
+
+            if not url:
+                return "Bạn phải nhập URL hoặc chọn file video.", 400
+
+            videos.append({
+                'title': title,
+                'category': category,
+                'url': url,
+                'likes': 0,
+                'dislikes': 0,
+                'comments': [],
+                'uploaded_at': datetime.now().isoformat()
+            })
+            save_data()
+            return redirect('/')
+
+        except Exception as e:
+            print("ERROR:", e)
+            traceback.print_exc()
+            return "Internal Server Error", 500
+
+    return render_template('upload.html', user=session.get('user'))
+
+@app.route('/like/<int:index>')
+def like(index):
+    if 0 <= index < len(videos):
+        videos[index]['likes'] += 1
+        save_data()
     return redirect('/')
+
+@app.route('/dislike/<int:index>')
+def dislike(index):
+    if 0 <= index < len(videos):
+        videos[index]['dislikes'] += 1
+        save_data()
+    return redirect('/')
+
+@app.route('/comment/<int:index>', methods=['POST'])
+def comment(index):
+    if 0 <= index < len(videos):
+        comment_text = request.form.get('comment')
+        if comment_text:
+            videos[index]['comments'].append(comment_text)
+            save_data()
+    return redirect('/')
+
+@app.route('/delete/<int:index>')
+def delete(index):
+    if 'user' in session and session['user']['role'] == 'admin':
+        if 0 <= index < len(videos):
+            del videos[index]
+            save_data()
+    return redirect('/')
+
+if __name__ == '__main__':
+    app.run(debug=True)
