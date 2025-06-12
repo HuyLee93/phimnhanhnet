@@ -1,0 +1,17 @@
+{% extends 'base.html' %}{% block c %}
+<h2>{{video.title}}</h2>
+<iframe id="player" src="{{video.url}}?autoplay=1" frameborder="0" allowfullscreen></iframe>
+<p>{{video.category}}</p>
+👍 {{video.likes}} 👎 {{video.dislikes}}<br>
+<a href="{{url_for('like',vid=video.id)}}">Like</a>
+<a href="{{url_for('dislike',vid=video.id)}}">Dislike</a><br>
+<form method="post" action="{{url_for('comment',vid=video.id)}}">
+  <input name="comment" placeholder="Bình luận..."><button>Gửi</button>
+</form>
+<ul>{% for c in video.comments %}<li><b>{{c.user}}:</b> {{c.txt}}</li>{% endfor %}</ul>
+
+<script>
+  let p=document.getElementById('player');
+  p.addEventListener('ended',()=>window.location='{{url_for("index")}}');
+</script>
+{% endblock %}

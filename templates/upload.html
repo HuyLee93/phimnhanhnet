@@ -1,23 +1,9 @@
-{% extends 'base.html' %}
-{% block content %}
-<h2>📤 Tải lên video mới</h2>
+{% extends 'base.html' %}{% block c %}
+<h2>🚀 Đăng video</h2>
 <form method="post">
   <input name="title" placeholder="Tiêu đề"><br>
-  <input name="url" placeholder="Link video (URL hoặc iframe)"><br>
-  <select name="category">
-    <option>Hành động</option>
-    <option>Hài</option>
-    <option>Hoạt hình</option>
-    <option>Phim mới</option>
-    <option>Phim ma</option>
-    <option>Tin tức</option>
-    <option>Phim viễn tưởng</option>
-    <option>Phim cổ</option>
-    <option>Nhạc hay</option>
-    <option>Video</option>
-    <option>Nhạc vàng</option>
-    <option>Nhạc trẻ</option>
-  </select><br>
+  <input name="url" placeholder="URL video hoặc Twitter"><br>
+  <select name="category">{% for c in ['Hài','Hành động','Hoạt hình','Phim mới','Phim ma'] %}<option>{{c}}</option>{% endfor %}</select><br>
   <button>Gửi</button>
 </form>
 {% endblock %}
