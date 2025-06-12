@@ -1,26 +1,44 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from datetime import datetime
+from urllib.parse import urlparse, parse_qs
 import uuid
 
 app = Flask(__name__)
 app.secret_key = 'lekoy93'
 
-# Dữ liệu tạm
 videos = []
-users = {'admin': {'password': 'lekoy93', 'role': 'admin'}}
-pending_videos = []
+comments = []
+users = {'admin': {'password': 'lekoy93', 'role': 'admin'},
+         'guest': {'password': '123', 'role': 'guest'}}
 
-# -------------------- ROUTES ---------------------
 
-@app.route('/')
+def convert_url_to_embed(url):
+    if "youtube.com" in url or "youtu.be" in url:
+        if "watch?v=" in url:
+            vid_id = parse_qs(urlparse(url).query).get('v', [None])[0]
+        elif "youtu.be" in url:
+            vid_id = urlparse(url).path.lstrip('/')
+        else:
+            vid_id = None
+        if vid_id:
+            return f"https://www.youtube.com/embed/{vid_id}"
+    elif "vimeo.com" in url:
+        vid_id = urlparse(url).path.lstrip('/')
+        return f"https://player.vimeo.com/video/{vid_id}"
+    # Mặc định trả về chính URL nếu không xử lý được
+    return url
+
+
+@app.route('/', methods=['GET'])
 def index():
-    keyword = request.args.get('q', '').lower()
+    q = request.args.get('q', '')
     category = request.args.get('category', '')
+    filtered = [v for v in videos if v['approved']]
+    if q:
+        filtered = [v for v in filtered if q.lower() in v['title'].lower()]
+    if category:
+        filtered = [v for v in filtered if v['category'] == category]
+    return render_template('index.html', videos=filtered, comments=comments, session=session)
 
-    filtered = [v for v in videos if
-                (keyword in v['title'].lower()) and
-                (category == '' or v['category'] == category)]
-    return render_template('index.html', videos=filtered, session=session)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -33,63 +51,63 @@ def login():
             return redirect('/')
     return render_template('login.html')
 
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect('/')
+
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     if 'username' not in session:
         return redirect('/login')
     if request.method == 'POST':
-        new_video = {
+        url = convert_url_to_embed(request.form['url'])
+        video = {
             'id': str(uuid.uuid4()),
             'title': request.form['title'],
-            'url': request.form['url'],
+            'url': url,
             'category': request.form['category'],
-            'author': session['username'],
-            'likes': 0,
-            'comments': [],
-            'date': datetime.now().strftime('%Y-%m-%d')
+            'user': session['username'],
+            'approved': session['role'] == 'admin'
         }
-        if session['role'] == 'admin':
-            videos.append(new_video)
-        else:
-            pending_videos.append(new_video)
+        videos.append(video)
         return redirect('/')
     return render_template('upload.html')
 
-@app.route('/approve/<video_id>')
-def approve(video_id):
-    if session.get('role') == 'admin':
-        for v in pending_videos:
-            if v['id'] == video_id:
-                videos.append(v)
-                pending_videos.remove(v)
-                break
+
+@app.route('/delete/<id>')
+def delete(id):
+    if session.get('role') != 'admin':
+        return redirect('/')
+    global videos
+    videos = [v for v in videos if v['id'] != id]
     return redirect('/')
 
-@app.route('/delete/<video_id>')
-def delete(video_id):
-    if session.get('role') == 'admin':
-        global videos
-        videos = [v for v in videos if v['id'] != video_id]
-    return redirect('/')
 
 @app.route('/comment/<video_id>', methods=['POST'])
 def comment(video_id):
+    if 'username' not in session:
+        return redirect('/login')
     text = request.form['comment']
-    for v in videos:
-        if v['id'] == video_id:
-            v['comments'].append({'author': session.get('username', 'guest'), 'text': text})
-            break
+    comments.append({'video_id': video_id, 'user': session['username'], 'text': text})
     return redirect('/')
+
 
 @app.route('/like/<video_id>')
 def like(video_id):
     for v in videos:
         if v['id'] == video_id:
-            v['likes'] += 1
+            v['likes'] = v.get('likes', 0) + 1
+            break
+    return redirect('/')
+
+
+@app.route('/dislike/<video_id>')
+def dislike(video_id):
+    for v in videos:
+        if v['id'] == video_id:
+            v['dislikes'] = v.get('dislikes', 0) + 1
             break
     return redirect('/')
