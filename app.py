@@ -86,3 +86,6 @@ def comment(vid):
 def watch(vid):
     return render_template('video.html', video=videos[vid])
 
+@app.route('/ping')
+def ping():
+    return 'pong'
