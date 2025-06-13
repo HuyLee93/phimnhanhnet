@@ -1,3 +1,10 @@
 {
-  "videos": []
+  "videos": [],
+  "users": [
+    {
+      "username": "admin",
+      "password": "lekoy93",
+      "role": "admin"
+    }
+  ]
 }
