@@ -45,8 +45,8 @@ def index():
 def login():
     error = None
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form['admin']
+        password = request.form['lekoy93']
         for user in users:
             if user['username'] == username and user['password'] == password:
                 session['user'] = user
