@@ -1,69 +1,43 @@
 {% extends "base.html" %}
+
 {% block content %}
-<form method="get" action="/">
-    <input type="text" name="q" placeholder="Tìm kiếm..." value="{{ request.args.get('q', '') }}">
-    <select name="category">
-        <option value="">Tất cả thể loại</option>
-        <option value="hài">Hài</option>
-        <option value="hành động">Hành động</option>
-        <option value="hoạt hình">Hoạt hình</option>
-        <option value="Video">Video</option>
-		<option value="Video nhạc">Video nhạc</option>
-		<option value="Nhạc">Nhạc</option>
-		<option value=Tin tức">Tin tức</option>
-		<option value="Phim hay">Phim hay</option>
-		<option value="Phim cổ">Phim cổ</option>
-		<option value="Phim mới">Phim mới</option>
-		<option value="ảnh">Ảnh</option>
-    </select>
-    <button type="submit">Tìm</button>
-</form>
+  {% for video in videos %}
+    <div class="video-card">
+      <h3>{{ video.title }}</h3>
+      {% if "embed" in video.url or "facebook.com/plugins/video.php" in video.url or "player.vimeo.com/video" in video.url %}
+        <iframe width="100%" height="315"
+                src="{{ video.url }}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+        </iframe>
+      {% else %}
+        <video controls width="100%">
+          <source src="{{ video.url }}" type="video/mp4">
+          Your browser does not support HTML5 video.
+        </video>
+      {% endif %}
+      <p>Thể loại: {{ video.category }}</p>
+      <p>👍 {{ video.likes }}   👎 {{ video.dislikes }}</p>
+      <a href="/like/{{ loop.index0 }}">Like</a> |
+      <a href="/dislike/{{ loop.index0 }}">Dislike</a>
 
-<div class="video-list">
-    {% for video in videos %}
-<div class="video-card">
-  <h3>{{ video.title }}</h3>
-  <iframe width="100%" height="315"
-          src="{{ video.url }}"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen>
-  </iframe>
-  <p>Thể loại: {{ video.category }}</p>
-  <p>👍 {{ video.likes }} 👎 {{ video.dislikes }}</p>
-  <form action="/like/{{ loop.index0 }}"><button>Like</button></form>
-  <form action="/dislike/{{ loop.index0 }}"><button>Dislike</button></form>
+      <h4>Bình luận:</h4>
+      <form action="/comment/{{ loop.index0 }}" method="POST">
+        <input type="text" name="comment" placeholder="Viết bình luận...">
+        <button type="submit">Gửi</button>
+      </form>
 
-  <form action="/comment/{{ loop.index0 }}" method="POST">
-    <input type="text" name="comment" placeholder="Viết bình luận...">
-    <button type="submit">Gửi</button>
-  </form>
+      <ul>
+        {% for c in video.comments %}
+          <li>{{ c }}</li>
+        {% endfor %}
+      </ul>
 
-  <ul>
-    {% for c in video.comments %}
-    <li>{{ c }}</li>
-    {% endfor %}
-  </ul>
-
-  {% if user and user.role == 'admin' %}
-  <a href="/delete/{{ loop.index0 }}">🗑️ Xóa</a>
-  {% endif %}
-</div>
-{% endfor %}
-
-        </p>
-        <form method="post" action="/comment/{{ loop.index0 }}">
-            <input type="text" name="comment" placeholder="Bình luận...">
-            <button type="submit">Gửi</button>
-        </form>
-        <ul>
-            {% for cmt in video.comments %}
-                <li>{{ cmt }}</li>
-            {% endfor %}
-        </ul>
+      {% if user and user.role == 'admin' %}
+        <a href="/delete/{{ loop.index0 }}">🗑️ Xóa video</a>
+      {% endif %}
+      <hr>
     </div>
-    {% else %}
-        <p>Không có video nào.</p>
-    {% endfor %}
-</div>
+  {% endfor %}
 {% endblock %}
