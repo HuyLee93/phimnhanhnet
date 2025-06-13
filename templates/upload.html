@@ -1,8 +1,11 @@
 {% extends "base.html" %}
+
 {% block content %}
 <h2>Đăng video mới</h2>
-<form method="post" enctype="multipart/form-data">
-    <input type="text" name="title" placeholder="Tiêu đề" required><br>
+
+<form method="POST" enctype="multipart/form-data">
+  <label>Tiêu đề:</label><br>
+  <input type="text" name="title" required><br><br>
     <select name="category" required>
         <option value="">Chọn thể loại</option>
         <option value="hài">Hài</option>
@@ -17,11 +20,19 @@
 		<option value="Phim mới">Phim mới</option>
         <option value="ảnh">Ảnh</option>
     </select><br>
-    <label>Hoặc nhập URL video (YouTube, Facebook...):</label><br>
-    <input type="url" name="url" placeholder="https://..." style="width: 100%;"><br>
-    <label>Hoặc tải file video lên (mp4):</label><br>
-    <input type="file" name="file"><br>
-    <button type="submit">Đăng video</button>
+    <label>Nhập URL (YouTube, Facebook, Vimeo...):</label><br>
+  <input type="url" name="url" placeholder="https://..." style="width: 100%;"><br><br>
+
+  <label>Hoặc chọn file video để upload:</label><br>
+  <input type="file" name="file" accept="video/*"><br><br>
+
+  <button type="submit">Đăng video</button>
 </form>
+
+<p style="color: red;">
+  * Ưu tiên dùng URL nhúng từ YouTube, Facebook, Vimeo để tiết kiệm dung lượng.<br>
+  * Nếu chọn cả URL và file, hệ thống sẽ ưu tiên file.
+</p>
 {% endblock %}
+
 
