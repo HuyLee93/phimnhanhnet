@@ -1,11 +1,35 @@
-<div class="overlay">
-    <div style="text-align: right; padding: 10px;">
-        {% if user %}
-            👋 Xin chào, {{ user }}! 
-            <a href="{{ url_for('logout') }}" style="color: lightgreen; margin-left: 10px;">Đăng xuất</a>
-        {% else %}
-            <a href="{{ url_for('login') }}" style="color: lightblue;">Đăng nhập</a>
-        {% endif %}
-    </div>
-
-    <div class="marquee">Lê Kòy xin chào các bạn</div>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="background-image: url('{{ url_for('static', filename='ga.jpg') }}'); background-size: cover;">
+  <header>
+    <h1 class="slogan">Phimnhanh.net – Vừa nhanh vừa nét</h1>
+    {% if session.get('username') %}
+      <p>Xin chào, {{ session['username'] }} | <a href="{{ url_for('logout') }}">Đăng xuất</a></p>
+    {% else %}
+      <a href="{{ url_for('login') }}">Đăng nhập</a>
+    {% endif %}
+  </header>
+  <nav>
+    <a href="/">Trang chủ</a>
+    <a href="/category/Hài">Hài</a>
+    <a href="/category/Hành Động">Hành động</a>
+    <a href="/category/Hoạt Hình">Hoạt hình</a>
+    <a href="/category/Ảnh">Ảnh</a>
+    {% if session.get('is_admin') %}
+      <a href="/upload">Đăng video</a>
+      <a href="/pending">Duyệt video</a>
+    {% endif %}
+  </nav>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    <p>&copy; 2025 Phimnhanh.net</p>
+  </footer>
+</body>
+</html>

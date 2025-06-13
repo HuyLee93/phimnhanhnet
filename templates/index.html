@@ -1,43 +1,29 @@
 {% extends "base.html" %}
-
 {% block content %}
-  {% for video in videos %}
-    <div class="video-card">
-      <h3>{{ video.title }}</h3>
-      {% if "embed" in video.url or "facebook.com/plugins/video.php" in video.url or "player.vimeo.com/video" in video.url %}
-        <iframe width="100%" height="315"
-                src="{{ video.url }}"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen>
-        </iframe>
-      {% else %}
-        <video controls width="100%">
-          <source src="{{ video.url }}" type="video/mp4">
-          Your browser does not support HTML5 video.
-        </video>
-      {% endif %}
-      <p>Thể loại: {{ video.category }}</p>
-      <p>👍 {{ video.likes }}   👎 {{ video.dislikes }}</p>
-      <a href="/like/{{ loop.index0 }}">Like</a> |
-      <a href="/dislike/{{ loop.index0 }}">Dislike</a>
-
-      <h4>Bình luận:</h4>
-      <form action="/comment/{{ loop.index0 }}" method="POST">
-        <input type="text" name="comment" placeholder="Viết bình luận...">
-        <button type="submit">Gửi</button>
-      </form>
-
-      <ul>
-        {% for c in video.comments %}
-          <li>{{ c }}</li>
-        {% endfor %}
-      </ul>
-
-      {% if user and user.role == 'admin' %}
-        <a href="/delete/{{ loop.index0 }}">🗑️ Xóa video</a>
-      {% endif %}
-      <hr>
-    </div>
-  {% endfor %}
+  <form action="/search" method="get">
+    <input type="text" name="q" placeholder="Tìm kiếm video...">
+    <button type="submit">Tìm</button>
+  </form>
+  <div class="video-list">
+    {% for video in videos %}
+      <div class="video-card">
+        <h3>{{ video.title }}</h3>
+        <iframe srcdoc="<iframe src='{{ video.embed_url }}' frameborder='0' allowfullscreen></iframe>" frameborder="0" allowfullscreen></iframe>
+        <p>Thể loại: {{ video.category }}</p>
+        <p>Likes: {{ video.likes }} | Dislikes: {{ video.dislikes }}</p>
+        <a href="/like/{{ video.id }}">👍</a>
+        <a href="/dislike/{{ video.id }}">👎</a>
+        <a href="/download/{{ video.id }}">Tải về</a>
+        <form action="/comment/{{ video.id }}" method="post">
+          <input type="text" name="comment" placeholder="Bình luận...">
+          <button type="submit">Gửi</button>
+        </form>
+        <div class="comments">
+          {% for cmt in video.comments %}
+            <p>{{ cmt }}</p>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 {% endblock %}
