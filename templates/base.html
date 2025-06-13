@@ -1,18 +1,41 @@
-{% extends "base.html" %}
-
-{% block content %}
-<h2>Đăng nhập</h2>
-<form method="POST" action="/login">
-  <label for="username">Tên đăng nhập:</label>
-  <input type="text" id="username" name="username" required>
-  <br>
-  <label for="password">Mật khẩu:</label>
-  <input type="password" id="password" name="password" required>
-  <br>
-  <button type="submit">Đăng nhập</button>
-  {% if error %}<p style="color: red;">{{ error }}</p>{% endif %}
-</form>
-{% endblock %}
-
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
+    <style>
+        body {
+            background-image: url("/static/ga.jpg");
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .marquee {
+            font-size: 24px;
+            font-weight: bold;
+            animation: marquee 10s linear infinite;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        @keyframes marquee {
+            0%   { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .video-card {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="marquee">Lê Kòy xin chào các bạn</div>
+    <h1>📺 Phimnhanh.net – Vừa nhanh vừa nét 🐔</h1>
+    {% block content %}{% endblock %}
+</body>
+</html>
 
 
