@@ -1,77 +1,11 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: url("/static/ga.jpg") no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: white;
-        }
-
-        .overlay {
-            background-color: rgba(0, 0, 0, 0.6);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .marquee {
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            box-sizing: border-box;
-            animation: marquee 15s linear infinite;
-            font-size: 24px;
-            font-weight: bold;
-            color: yellow;
-        }
-
-        @keyframes marquee {
-            0%   { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
-        .container {
-            max-width: 960px;
-            margin: auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .video-card {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        a, a:visited {
-            color: #ffc107;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <div class="overlay">
-        <div class="marquee">Lê Kòy xin chào các bạn</div>
-        <div class="header">
-            <h1>📺 Phimnhanh.net – Vừa nhanh vừa nét 🐔</h1>
-        </div>
-
-        <div class="container">
-            {% block content %}{% endblock %}
-        </div>
+<div class="overlay">
+    <div style="text-align: right; padding: 10px;">
+        {% if user %}
+            👋 Xin chào, {{ user }}! 
+            <a href="{{ url_for('logout') }}" style="color: lightgreen; margin-left: 10px;">Đăng xuất</a>
+        {% else %}
+            <a href="{{ url_for('login') }}" style="color: lightblue;">Đăng nhập</a>
+        {% endif %}
     </div>
-</body>
-</html>
+
+    <div class="marquee">Lê Kòy xin chào các bạn</div>
