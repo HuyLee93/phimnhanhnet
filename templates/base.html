@@ -1,31 +1,18 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-    <header>
-        <img src="/static/images/logo.png" alt="Logo" class="logo">
-        <h1>Phimnhanh.net – Vừa nhanh vừa nét</h1>
-        <nav>
-            <a href="/">Trang chủ</a>
-            {% if user and user.role == 'admin' %}
-                <a href="/upload">Đăng video</a>
-            {% endif %}
-            {% if user %}
-                <a href="/logout">Đăng xuất ({{ user.username }})</a>
-            {% else %}
-                <a href="/login">Đăng nhập</a>
-            {% endif %}
-        </nav>
-    </header>
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Đăng nhập</h2>
+<form method="POST" action="/login">
+  <label for="username">Tên đăng nhập:</label>
+  <input type="text" id="username" name="username" required>
+  <br>
+  <label for="password">Mật khẩu:</label>
+  <input type="password" id="password" name="password" required>
+  <br>
+  <button type="submit">Đăng nhập</button>
+  {% if error %}<p style="color: red;">{{ error }}</p>{% endif %}
+</form>
+{% endblock %}
 
 
 

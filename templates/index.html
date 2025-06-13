@@ -21,25 +21,36 @@
 
 <div class="video-list">
     {% for video in videos %}
-    <div class="video-card">
-        <h3>{{ video.title }}</h3>
-        <div class="player">
-            {% if video.url.startswith('http') %}
-                <iframe src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
-            {% else %}
-                <video controls>
-                    <source src="{{ video.url }}" type="video/mp4">
-                    Trình duyệt không hỗ trợ video.
-                </video>
-            {% endif %}
-        </div>
-        <p>Thể loại: {{ video.category }}</p>
-        <p>
-            <a href="/like/{{ loop.index0 }}">👍 {{ video.likes }}</a>
-            <a href="/dislike/{{ loop.index0 }}">👎 {{ video.dislikes }}</a>
-            {% if user and user.role == 'admin' %}
-                <a href="/delete/{{ loop.index0 }}">🗑️ Xoá</a>
-            {% endif %}
+<div class="video-card">
+  <h3>{{ video.title }}</h3>
+  <iframe width="100%" height="315"
+          src="{{ video.url }}"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+  </iframe>
+  <p>Thể loại: {{ video.category }}</p>
+  <p>👍 {{ video.likes }} 👎 {{ video.dislikes }}</p>
+  <form action="/like/{{ loop.index0 }}"><button>Like</button></form>
+  <form action="/dislike/{{ loop.index0 }}"><button>Dislike</button></form>
+
+  <form action="/comment/{{ loop.index0 }}" method="POST">
+    <input type="text" name="comment" placeholder="Viết bình luận...">
+    <button type="submit">Gửi</button>
+  </form>
+
+  <ul>
+    {% for c in video.comments %}
+    <li>{{ c }}</li>
+    {% endfor %}
+  </ul>
+
+  {% if user and user.role == 'admin' %}
+  <a href="/delete/{{ loop.index0 }}">🗑️ Xóa</a>
+  {% endif %}
+</div>
+{% endfor %}
+
         </p>
         <form method="post" action="/comment/{{ loop.index0 }}">
             <input type="text" name="comment" placeholder="Bình luận...">

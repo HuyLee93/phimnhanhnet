@@ -31,6 +31,20 @@ def save_data():
     with open(DATA_FILE, 'w') as f:
         json.dump({'videos': videos, 'users': users}, f, indent=4)
 
+def convert_to_embed(url):
+    if 'youtube.com/watch?v=' in url:
+        video_id = url.split('watch?v=')[1].split('&')[0]
+        return f"https://www.youtube.com/embed/{video_id}"
+    elif 'youtu.be/' in url:
+        video_id = url.split('youtu.be/')[1].split('?')[0]
+        return f"https://www.youtube.com/embed/{video_id}"
+    elif 'facebook.com/' in url:
+        return f"https://www.facebook.com/plugins/video.php?href={url}"
+    elif 'vimeo.com/' in url:
+        video_id = url.split('/')[-1]
+        return f"https://player.vimeo.com/video/{video_id}"
+    return url
+
 @app.route('/')
 def index():
     keyword = request.args.get('q', '').lower()
@@ -71,14 +85,14 @@ def upload():
             url = request.form.get('url')
             file = request.files.get('file')
 
-            # Nếu có file upload
             if file and file.filename:
                 filename = secure_filename(file.filename)
                 filepath = os.path.join(UPLOAD_FOLDER, filename)
                 file.save(filepath)
-                url = '/' + filepath  # dùng đường dẫn nội bộ
-
-            if not url:
+                url = '/' + filepath
+            elif url:
+                url = convert_to_embed(url)
+            else:
                 return "Bạn phải nhập URL hoặc chọn file video.", 400
 
             videos.append({
