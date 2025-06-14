@@ -37,13 +37,11 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Load video từ file
 def load_data():
->>>>>>> 5f32429e13e5746e0ce49ff36bc9bd937c7a9564
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
             return json.load(f)
     return []
 
-<<<<<<< HEAD
 def save_videos(videos):
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(videos, f, indent=2, ensure_ascii=False)
@@ -123,12 +121,10 @@ def login():
 @app.route('/logout')
 def logout():
     session.clear()
->>>>>>> 5f32429e13e5746e0ce49ff36bc9bd937c7a9564
     return redirect(url_for('index'))
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-<<<<<<< HEAD
     if 'user' not in session:
         return redirect(url_for('login'))
     if request.method == 'POST':
