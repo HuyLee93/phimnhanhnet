@@ -5,13 +5,6 @@ import json
 
 app = Flask(__name__)
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        # xử lý đăng nhập ở đây
-        pass
-    return render_template('login.html')
-
 DATA_FILE = 'data.json'
 UPLOAD_FOLDER = 'static/uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -49,6 +42,13 @@ def index():
     videos = load_data()
     return render_template('index.html', videos=videos)
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        # xử lý đăng nhập ở đây
+        pass
+    return render_template('login.html')
+
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
     if request.method == 'POST':
@@ -58,3 +58,12 @@ def upload():
         videos = load_data()
         videos.append({
             'title': title,
+            'url': embed_url,
+            'created': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        })
+        save_data(videos)
+        return redirect(url_for('index'))
+    return render_template('upload.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
