@@ -1,62 +1,57 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-import os
-import json
 from datetime import datetime
-from werkzeug.utils import secure_filename
+import json, os, re
 
 app = Flask(__name__)
-app.secret_key = 'lekoysecret'
-UPLOAD_FOLDER = 'static/uploads'
-VIDEO_DB = 'videos.json'
+app.secret_key = 'lekoy-secret'
 
-# Tạo thư mục upload nếu chưa có
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-# Tài khoản admin
+VIDEO_FILE = 'videos.json'
 ADMIN_USERNAME = 'admin'
 ADMIN_PASSWORD = 'lekoy93'
 
+# Load video list from file
 def load_videos():
-    if not os.path.exists(VIDEO_DB):
+    if not os.path.exists(VIDEO_FILE):
         return []
-    with open(VIDEO_DB, 'r', encoding='utf-8') as f:
-        try:
-            videos = json.load(f)
-        except:
-            return []
-        for v in videos:
-            if isinstance(v.get("upload_date"), str):
-                try:
-                    v["upload_date"] = datetime.strptime(v["upload_date"], "%Y-%m-%d %H:%M:%S")
-                except:
-                    v["upload_date"] = datetime.now()
-            elif "upload_date" not in v:
-                v["upload_date"] = datetime.now()
-        return videos
+    with open(VIDEO_FILE, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
+# Save video list to file
 def save_videos(videos):
-    with open(VIDEO_DB, 'w', encoding='utf-8') as f:
-        for v in videos:
-            if isinstance(v.get("upload_date"), datetime):
-                v["upload_date"] = v["upload_date"].strftime("%Y-%m-%d %H:%M:%S")
-        json.dump(videos, f, ensure_ascii=False, indent=2)
+    with open(VIDEO_FILE, 'w', encoding='utf-8') as f:
+        json.dump(videos, f, ensure_ascii=False, indent=2, default=str)
+
+# Convert URL to embed iframe-compatible URL
+def convert_to_embed(url):
+    if "youtube.com/watch?v=" in url:
+        video_id = url.split("watch?v=")[-1].split("&")[0]
+        return f"https://www.youtube.com/embed/{video_id}"
+    elif "youtu.be/" in url:
+        video_id = url.split("youtu.be/")[-1].split("?")[0]
+        return f"https://www.youtube.com/embed/{video_id}"
+    elif "facebook.com" in url:
+        return f"https://www.facebook.com/plugins/video.php?href={url}"
+    elif "vimeo.com/" in url:
+        match = re.search(r"vimeo.com/(\\d+)", url)
+        if match:
+            return f"https://player.vimeo.com/video/{match.group(1)}"
+    elif "tiktok.com" in url:
+        return f"https://www.tiktok.com/embed/{url.split('/')[-1]}"
+    return url
+
+videos = load_videos()
 
 @app.route('/')
 def index():
-    videos = load_videos()
     approved = [v for v in videos if v.get('approved')]
     return render_template('index.html', videos=approved)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        u = request.form['username']
-        p = request.form['password']
-        if u == ADMIN_USERNAME and p == ADMIN_PASSWORD:
+        if request.form['username'] == ADMIN_USERNAME and request.form['password'] == ADMIN_PASSWORD:
             session['admin'] = True
             return redirect(url_for('upload'))
-        else:
-            return 'Sai thông tin'
     return render_template('login.html')
 
 @app.route('/logout')
@@ -74,15 +69,15 @@ def upload():
         url = request.form['url']
         category = request.form['category']
 
-        videos = load_videos()
-        videos.append({
-            "title": title,
-            "url": url,
-            "category": category,
-            "upload_date": datetime.now(),
-            "uploader": "admin",
-            "approved": True
-        })
+        embed_url = convert_to_embed(url)
+        video = {
+            'title': title,
+            'url': embed_url,
+            'category': category,
+            'approved': True,
+            'upload_date': datetime.now().strftime('%Y-%m-%d')
+        }
+        videos.append(video)
         save_videos(videos)
         return redirect(url_for('index'))
 
@@ -90,9 +85,8 @@ def upload():
 
 @app.route('/category/<cat>')
 def category(cat):
-    videos = load_videos()
-    filtered = [v for v in videos if v.get("approved") and v.get("category") == cat]
+    filtered = [v for v in videos if v.get('approved') and v.get('category') == cat]
     return render_template('category.html', videos=filtered, category=cat)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
