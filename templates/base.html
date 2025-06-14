@@ -1,41 +1,92 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
-    <style>
-        body {
-            background: url("/static/ga.jpg") no-repeat center center fixed;
-            background-size: cover;
-            font-family: Arial;
-            color: white;
-            text-align: center;
-        }
-        .marquee {
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            animation: marquee 10s linear infinite;
-        }
-        @keyframes marquee {
-            from { transform: translateX(100%); }
-            to { transform: translateX(-100%); }
-        }
-        a { color: yellow; padding: 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Phim Nhanh - Vừa nhanh vừa nét</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom, #fff8e1, #ffe082);
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #b71c1c;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
+      font-family: 'Pacifico', cursive;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    nav {
+      background-color: #ffcc80;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-bottom: 2px solid #ffa000;
+    }
+    nav a {
+      color: #4e342e;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #d84315;
+    }
+    .container {
+      padding: 2rem;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .video-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+    .video-card:hover {
+      transform: translateY(-5px);
+    }
+    .video-card h3 {
+      color: #d84315;
+      margin-top: 0;
+      font-size: 1.4rem;
+    }
+    footer {
+      text-align: center;
+      background: #b71c1c;
+      color: white;
+      padding: 1rem;
+      margin-top: 3rem;
+      font-size: 0.95rem;
+    }
+  </style>
 </head>
 <body>
-    <div class="marquee">Lê Kòy xin chào các bạn</div>
-    <div>
-        <a href="/">Trang chủ</a>
-        <a href="/upload">Đăng video</a>
-        {% if session.admin %}
-            <a href="/admin">Quản lý</a>
-            <a href="/logout">Thoát</a>
-        {% else %}
-            <a href="/login">Đăng nhập</a>
-        {% endif %}
-    </div>
+  <header>
+    <img src="{{ url_for('static', filename='ga.png') }}" height="40" style="vertical-align: middle; margin-right: 10px;"> 
+    Phimnhanh.net – Vừa nhanh vừa nét
+  </header>
+  <nav>
+    <a href="{{ url_for('index') }}">Trang chủ</a>
+    <a href="{{ url_for('category', cat='Hài') }}">Hài</a>
+    <a href="{{ url_for('category', cat='Hành động') }}">Hành động</a>
+    <a href="{{ url_for('category', cat='Hoạt hình') }}">Hoạt hình</a>
+    <a href="{{ url_for('category', cat='Ảnh') }}">Ảnh</a>
+  </nav>
+  <div class="container">
     {% block content %}{% endblock %}
+  </div>
+  <footer>
+    © 2025 Phimnhanh.net - Hợp phong thủy Quý Dậu 🐔
+  </footer>
 </body>
 </html>

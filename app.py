@@ -51,7 +51,7 @@ def upload():
                      (title, url, category, 'guest'))
         conn.commit()
         conn.close()
-        return redirect(url_for('index'))
+        return redirect(url_for('upload'))  # Giữ nguyên trang để thông báo "đã gửi thành công"
     return render_template('upload.html')
 
 @app.route('/admin', methods=['GET', 'POST'])
