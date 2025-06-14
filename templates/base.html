@@ -76,12 +76,21 @@
     Phimnhanh.net – Vừa nhanh vừa nét
   </header>
   <nav>
-    <a href="{{ url_for('index') }}">Trang chủ</a>
-    <a href="{{ url_for('category', cat='Hài') }}">Hài</a>
-    <a href="{{ url_for('category', cat='Hành động') }}">Hành động</a>
-    <a href="{{ url_for('category', cat='Hoạt hình') }}">Hoạt hình</a>
-    <a href="{{ url_for('category', cat='Ảnh') }}">Ảnh</a>
-  </nav>
+  <a href="{{ url_for('index') }}">Trang chủ</a>
+  <a href="{{ url_for('category', cat='Hài') }}">Hài</a>
+  <a href="{{ url_for('category', cat='Hành động') }}">Hành động</a>
+  <a href="{{ url_for('category', cat='Hoạt hình') }}">Hoạt hình</a>
+  <a href="{{ url_for('category', cat='Ảnh') }}">Ảnh</a>
+
+  {% if session.admin %}
+    <a href="{{ url_for('upload') }}">Đăng video</a>
+    <a href="{{ url_for('admin') }}">Quản trị</a>
+    <a href="{{ url_for('logout') }}">Đăng xuất</a>
+  {% else %}
+    <a href="{{ url_for('login') }}">Đăng nhập</a>
+  {% endif %}
+</nav>
+
   <div class="container">
     {% block content %}{% endblock %}
   </div>
