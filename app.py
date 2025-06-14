@@ -4,16 +4,13 @@ import os
 import json
 
 app = Flask(__name__)
-@app.route("/login", methods=["GET", "POST"])
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        if username == "admin" and password == "lekoy93":
-            return redirect(url_for("index"))
-        else:
-            return render_template("login.html", error="Sai tên đăng nhập hoặc mật khẩu!")
-    return render_template("login.html")
+    if request.method == 'POST':
+        # xử lý đăng nhập ở đây
+        pass
+    return render_template('login.html')
 
 DATA_FILE = 'data.json'
 UPLOAD_FOLDER = 'static/uploads'
@@ -51,9 +48,6 @@ def convert_url_to_embed(url):
 def index():
     videos = load_data()
     return render_template('index.html', videos=videos)
-@app.route('/login')
-def login():
-    return "<h2>Trang đăng nhập đang phát triển...</h2>"
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -64,12 +58,3 @@ def upload():
         videos = load_data()
         videos.append({
             'title': title,
-            'url': embed_url,
-            'created': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        })
-        save_data(videos)
-        return redirect(url_for('index'))
-    return render_template('upload.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
