@@ -1,48 +1,52 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from datetime import datetime
-import json, os, re
+import json
+import os
+from urllib.parse import urlparse
 
 app = Flask(__name__)
-app.secret_key = 'lekoy-secret'
+app.secret_key = 'lekoy-secret-key'
 
-VIDEO_FILE = 'videos.json'
+DATA_FILE = 'data/videos.json'
+UPLOAD_FOLDER = 'static/uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs('data', exist_ok=True)
+
 ADMIN_USERNAME = 'admin'
 ADMIN_PASSWORD = 'lekoy93'
 
-# Load video list from file
 def load_videos():
-    if not os.path.exists(VIDEO_FILE):
-        return []
-    with open(VIDEO_FILE, 'r', encoding='utf-8') as f:
-        return json.load(f)
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+            try:
+                return json.load(f)
+            except:
+                return []
+    return []
 
-# Save video list to file
 def save_videos(videos):
-    with open(VIDEO_FILE, 'w', encoding='utf-8') as f:
-        json.dump(videos, f, ensure_ascii=False, indent=2, default=str)
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(videos, f, indent=2, ensure_ascii=False)
 
-# Convert URL to embed iframe-compatible URL
 def convert_to_embed(url):
-    if "youtube.com/watch?v=" in url:
-        video_id = url.split("watch?v=")[-1].split("&")[0]
+    if 'youtube.com' in url or 'youtu.be' in url:
+        if 'watch?v=' in url:
+            video_id = url.split('watch?v=')[-1].split('&')[0]
+        elif 'youtu.be/' in url:
+            video_id = url.split('youtu.be/')[-1].split('?')[0]
         return f"https://www.youtube.com/embed/{video_id}"
-    elif "youtu.be/" in url:
-        video_id = url.split("youtu.be/")[-1].split("?")[0]
-        return f"https://www.youtube.com/embed/{video_id}"
-    elif "facebook.com" in url:
+    elif 'facebook.com' in url:
         return f"https://www.facebook.com/plugins/video.php?href={url}"
-    elif "vimeo.com/" in url:
-        match = re.search(r"vimeo.com/(\\d+)", url)
-        if match:
-            return f"https://player.vimeo.com/video/{match.group(1)}"
-    elif "tiktok.com" in url:
-        return f"https://www.tiktok.com/embed/{url.split('/')[-1]}"
-    return url
-
-videos = load_videos()
+    elif 'vimeo.com' in url:
+        video_id = url.split('/')[-1]
+        return f"https://player.vimeo.com/video/{video_id}"
+    else:
+        # fallback: dùng iframe trực tiếp
+        return url
 
 @app.route('/')
 def index():
+    videos = load_videos()
     approved = [v for v in videos if v.get('approved')]
     return render_template('index.html', videos=approved)
 
@@ -68,25 +72,42 @@ def upload():
         title = request.form['title']
         url = request.form['url']
         category = request.form['category']
-
         embed_url = convert_to_embed(url)
-        video = {
+        now = datetime.now().strftime('%Y-%m-%d')
+
+        new_video = {
             'title': title,
             'url': embed_url,
+            'upload_date': now,
             'category': category,
-            'approved': True,
-            'upload_date': datetime.now().strftime('%Y-%m-%d')
+            'approved': True  # vì admin đăng nên tự động duyệt
         }
-        videos.append(video)
+
+        videos = load_videos()
+        videos.append(new_video)
         save_videos(videos)
+
         return redirect(url_for('index'))
 
     return render_template('upload.html')
 
-@app.route('/category/<cat>')
-def category(cat):
-    filtered = [v for v in videos if v.get('approved') and v.get('category') == cat]
-    return render_template('category.html', videos=filtered, category=cat)
+@app.route('/pending')
+def pending():
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+    videos = load_videos()
+    unapproved = [v for v in videos if not v.get('approved')]
+    return render_template('pending.html', videos=unapproved)
+
+@app.route('/approve/<int:video_id>')
+def approve(video_id):
+    if not session.get('admin'):
+        return redirect(url_for('login'))
+    videos = load_videos()
+    if 0 <= video_id < len(videos):
+        videos[video_id]['approved'] = True
+        save_videos(videos)
+    return redirect(url_for('pending'))
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(host='0.0.0.0', port=5000)
