@@ -1,12 +1,44 @@
 {% extends "base.html" %}
+
 {% block content %}
-  <h2>Video mới nhất</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
   {% for video in videos %}
-    <div class="video-card">
-      <h3>{{ video.title }}</h3>
-      <iframe width="300" height="200" src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
-      <p>Thể loại: {{ video.category }}</p>
-      <p>Ngày đăng: {{ video.upload_date.strftime('%d/%m/%Y') if video.upload_date else 'Không rõ' }}</p>
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+      <div class="aspect-w-16 aspect-h-9">
+        <iframe
+          class="w-full h-full"
+          src="{{ video.url }}"
+          frameborder="0"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <div class="p-4">
+        <h2 class="text-xl font-bold mb-2">{{ video.title }}</h2>
+        <p class="text-sm text-gray-600">
+          Ngày đăng:
+          {% if video.upload_date %}
+            {{ video.upload_date[:10] | replace('-', '/') }}
+          {% else %}
+            Không rõ
+          {% endif %}
+        </p>
+        <p class="text-sm text-gray-600">Thể loại: {{ video.category }}</p>
+        <p class="text-sm text-gray-600">Đăng bởi: {{ video.uploader }}</p>
+        <div class="mt-2 flex space-x-2">
+          <form method="POST" action="/like/{{ video._id }}">
+            <button class="text-green-600 hover:underline">👍 {{ video.likes }}</button>
+          </form>
+          <form method="POST" action="/dislike/{{ video._id }}">
+            <button class="text-red-600 hover:underline">👎 {{ video.dislikes }}</button>
+          </form>
+        </div>
+        {% if session.get('role') == 'admin' %}
+          <form method="POST" action="/delete/{{ video._id }}" class="mt-2">
+            <button class="text-red-700 hover:underline">🗑 Xóa video</button>
+          </form>
+        {% endif %}
+      </div>
     </div>
   {% endfor %}
+</div>
 {% endblock %}
