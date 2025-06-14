@@ -1,94 +1,41 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <style>
-    body {
-      background-image: url("{{ url_for('static', filename='ga.jpg') }}");
-      background-size: cover;
-      background-attachment: fixed;
-      font-family: Arial, sans-serif;
-      color: white;
-      margin: 0;
-      padding: 0;
-    }
-    .header {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 15px;
-      text-align: center;
-    }
-    .slogan {
-      color: yellow;
-      font-size: 24px;
-      animation: marquee 10s linear infinite;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-    @keyframes marquee {
-      0%   { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
-    nav {
-      background: rgba(0, 0, 0, 0.8);
-      padding: 10px;
-      text-align: center;
-    }
-    nav a {
-      color: #ffa500;
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    main {
-      background: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      margin: 20px;
-      border-radius: 10px;
-    }
-    footer {
-      text-align: center;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.6);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
+    <style>
+        body {
+            background: url("/static/ga.jpg") no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial;
+            color: white;
+            text-align: center;
+        }
+        .marquee {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            animation: marquee 10s linear infinite;
+        }
+        @keyframes marquee {
+            from { transform: translateX(100%); }
+            to { transform: translateX(-100%); }
+        }
+        a { color: yellow; padding: 10px; }
+    </style>
 </head>
 <body>
-  <div class="header">
-    <div class="slogan">Lê Kòy xin chào các bạn</div>
+    <div class="marquee">Lê Kòy xin chào các bạn</div>
     <div>
-      {% if session.get('username') %}
-        Xin chào, {{ session['username'] }} |
-        <a href="{{ url_for('logout') }}">Đăng xuất</a>
-      {% else %}
-        <a href="{{ url_for('login') }}">Đăng nhập</a>
-      {% endif %}
+        <a href="/">Trang chủ</a>
+        <a href="/upload">Đăng video</a>
+        {% if session.admin %}
+            <a href="/admin">Quản lý</a>
+            <a href="/logout">Thoát</a>
+        {% else %}
+            <a href="/login">Đăng nhập</a>
+        {% endif %}
     </div>
-  </div>
-
-  <nav>
-    <a href="{{ url_for('index') }}">Trang chủ</a>
-    <a href="{{ url_for('category', cat='Hài') }}">Hài</a>
-    <a href="{{ url_for('category', cat='Hành Động') }}">Hành động</a>
-    <a href="{{ url_for('category', cat='Hoạt Hình') }}">Hoạt hình</a>
-    <a href="{{ url_for('category', cat='Video') }}">Video</a>
-    {% if session.get('is_admin') %}
-      <a href="{{ url_for('upload') }}">Đăng video</a>
-      <a href="{{ url_for('pending') }}">Duyệt video</a>
-    {% endif %}
-  </nav>
-
-  <main>
     {% block content %}{% endblock %}
-  </main>
-
-  <footer>
-    <p>&copy; 2025 Phimnhanh.net – Vừa nhanh vừa nét</p>
-  </footer>
 </body>
 </html>

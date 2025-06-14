@@ -1,31 +1,10 @@
-<<<<<<< HEAD
 {% extends "base.html" %}
 {% block content %}
-  <h2>Đăng nhập quản trị</h2>
-  <form method="post">
-    <label>Username:</label><input name="username"><br>
-    <label>Password:</label><input name="password" type="password"><br>
-    <button>Đăng nhập</button>
-  </form>
+<h2>Đăng nhập admin</h2>
+<form method="POST">
+    <input type="text" name="username" placeholder="Tên đăng nhập"><br>
+    <input type="password" name="password" placeholder="Mật khẩu"><br>
+    <button type="submit">Đăng nhập</button>
+</form>
+{% if error %}<p style="color:red;">{{ error }}</p>{% endif %}
 {% endblock %}
-=======
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Đăng nhập</title>
-</head>
-<body>
-    <h2>Đăng nhập</h2>
-    {% if error %}
-        <p style="color:red;">{{ error }}</p>
-    {% endif %}
-    <form method="POST">
-        <label>Tên đăng nhập:</label>
-        <input type="text" name="username"><br>
-        <label>Mật khẩu:</label>
-        <input type="password" name="password"><br>
-        <button type="submit">Đăng nhập</button>
-    </form>
-</body>
-</html>
->>>>>>> 5f32429e13e5746e0ce49ff36bc9bd937c7a9564

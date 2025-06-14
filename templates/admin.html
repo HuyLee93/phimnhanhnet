@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-  <h2>Duyệt video chưa được phê duyệt</h2>
-  {% for video in videos %}
-    {% if not video.approved %}
-    <div class="video-card">
-      <h3>{{ video.title }}</h3>
-      <iframe width="100%" height="315" src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
-      <form method="post" action="/approve/{{ loop.index0 }}">
-        <button name="action" value="approve">Duyệt</button>
-        <button name="action" value="delete">Xóa</button>
-      </form>
+<h2>Quản lý video</h2>
+{% for video in videos %}
+    <div style="border: 1px solid white; margin: 10px; padding: 10px;">
+        <h3>{{ video.title }}</h3>
+        <iframe width="400" height="250" src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
+        <p>Trạng thái: {{ '✅ Duyệt' if video.approved else '⏳ Chờ duyệt' }}</p>
+        <form method="POST">
+            <input type="hidden" name="video_id" value="{{ video.id }}">
+            {% if not video.approved %}
+                <button name="action" value="approve">Duyệt</button>
+            {% endif %}
+            <button name="action" value="delete">Xóa</button>
+        </form>
     </div>
-    {% endif %}
-  {% endfor %}
+{% endfor %}
 {% endblock %}
