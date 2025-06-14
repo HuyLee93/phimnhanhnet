@@ -4,6 +4,16 @@ import os
 import json
 
 app = Flask(__name__)
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if username == "admin" and password == "lekoy93":
+            return redirect(url_for("index"))
+        else:
+            return render_template("login.html", error="Sai tên đăng nhập hoặc mật khẩu!")
+    return render_template("login.html")
 
 DATA_FILE = 'data.json'
 UPLOAD_FOLDER = 'static/uploads'
