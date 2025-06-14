@@ -1,67 +1,19 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Đăng nhập | Phimnhanh.net</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-image: url('/static/ga.jpg');
-            background-size: cover;
-            background-position: center;
-            font-family: Arial, sans-serif;
-            color: white;
-        }
-        .marquee {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: rgba(0,0,0,0.5);
-            color: yellow;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-        .marquee div {
-            display: inline-block;
-            padding-left: 100%;
-            animation: scroll 15s linear infinite;
-        }
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
-        }
-        .login-box {
-            max-width: 400px;
-            margin: 150px auto;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 10px;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: orange;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
+    <title>Đăng nhập</title>
 </head>
 <body>
-    <div class="login-box">
-        <h2>Đăng nhập</h2>
-        {% if error %}<p style="color: red">{{ error }}</p>{% endif %}
-        <form method="post">
-            <input type="text" name="username" placeholder="Tên đăng nhập" required>
-            <input type="password" name="password" placeholder="Mật khẩu" required>
-            <button type="submit">Đăng nhập</button>
-        </form>
-    </div>
-    <div class="marquee"><div>Lê kòy xin chào các bạn</div></div>
+    <h2>Đăng nhập</h2>
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+    <form method="POST">
+        <label>Tên đăng nhập:</label>
+        <input type="text" name="username"><br>
+        <label>Mật khẩu:</label>
+        <input type="password" name="password"><br>
+        <button type="submit">Đăng nhập</button>
+    </form>
 </body>
 </html>

@@ -1,29 +1,28 @@
-{% extends "base.html" %}
-{% block content %}
-  <form action="/search" method="get">
-    <input type="text" name="q" placeholder="Tìm kiếm video...">
-    <button type="submit">Tìm</button>
-  </form>
-  <div class="video-list">
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trang chủ Video</title>
+</head>
+<body>
+    <h1>Phim Nhanh – Vừa nhanh vừa nét</h1>
+
+    {% if session.get('username') %}
+        <p>Xin chào, {{ session['username'] }}!</p>
+        {% if session['role'] == 'admin' %}
+            <a href="{{ url_for('upload') }}">Đăng video</a> |
+        {% endif %}
+        <a href="{{ url_for('logout') }}">Đăng xuất</a>
+    {% else %}
+        <a href="{{ url_for('login') }}">Đăng nhập</a>
+    {% endif %}
+
+    <h2>Danh sách video đã duyệt</h2>
     {% for video in videos %}
-      <div class="video-card">
-        <h3>{{ video.title }}</h3>
-        <iframe srcdoc="<iframe src='{{ video.embed_url }}' frameborder='0' allowfullscreen></iframe>" frameborder="0" allowfullscreen></iframe>
-        <p>Thể loại: {{ video.category }}</p>
-        <p>Likes: {{ video.likes }} | Dislikes: {{ video.dislikes }}</p>
-        <a href="/like/{{ video.id }}">👍</a>
-        <a href="/dislike/{{ video.id }}">👎</a>
-        <a href="/download/{{ video.id }}">Tải về</a>
-        <form action="/comment/{{ video.id }}" method="post">
-          <input type="text" name="comment" placeholder="Bình luận...">
-          <button type="submit">Gửi</button>
-        </form>
-        <div class="comments">
-          {% for cmt in video.comments %}
-            <p>{{ cmt }}</p>
-          {% endfor %}
+        <div style="margin-bottom: 30px;">
+            <h3>{{ video.title }}</h3>
+            <iframe width="560" height="315" src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
+            <p>Đăng lúc: {{ video.created }}</p>
         </div>
-      </div>
     {% endfor %}
-  </div>
-{% endblock %}
+</body>
+</html>
