@@ -1,108 +1,86 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<<<<<<< HEAD
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            background: url('/static/bg.jpg') no-repeat center center fixed;
-            background-size: cover;
-            font-family: Arial, sans-serif;
-            color: white;
-            margin: 0;
-            padding: 0;
-        }
-        .header {
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .container {
-            padding: 20px;
-            background: rgba(0,0,0,0.6);
-            margin: 20px;
-            border-radius: 10px;
-        }
-        .video-card {
-            background: #111;
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 8px;
-        }
-        a, a:visited {
-            color: #ffa500;
-        }
-        input, textarea {
-            padding: 6px;
-            border-radius: 5px;
-            border: none;
-            width: 100%;
-        }
-        button {
-            background: #ffa500;
-            color: #000;
-            padding: 8px 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-        .running-text {
-            color: yellow;
-            font-size: 18px;
-            text-align: center;
-            animation: marquee 10s linear infinite;
-        }
-        @keyframes marquee {
-            0%   { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="running-text">Lê Kòy xin chào các bạn</div>
-        <div><a href="/">Trang chủ</a> | <a href="/upload">Tải lên</a> | <a href="/login">Đăng nhập</a></div>
-    </div>
-    <div class="container">
-        {% block content %}{% endblock %}
-    </div>
-=======
   <meta charset="UTF-8">
   <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background: url('{{ url_for("static", filename="ga.jpg") }}') no-repeat center center fixed;
+      background-size: cover;
+      font-family: Arial, sans-serif;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    header, nav, footer {
+      background: rgba(0,0,0,0.7);
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      margin: 0 10px;
+      color: #ffa500;
+      text-decoration: none;
+    }
+    .slogan {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .running-text {
+      color: yellow;
+      font-size: 18px;
+      animation: marquee 10s linear infinite;
+    }
+    @keyframes marquee {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    main {
+      background: rgba(0,0,0,0.6);
+      margin: 20px;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    button {
+      background: #ffa500;
+      color: #000;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body style="background-image: url('{{ url_for('static', filename='ga.jpg') }}'); background-size: cover;">
+<body>
   <header>
-    <h1 class="slogan">Phimnhanh.net – Vừa nhanh vừa nét</h1>
+    <div class="slogan">Phimnhanh.net – Vừa nhanh vừa nét</div>
+    <div class="running-text">Lê Kòy xin chào các bạn</div>
     {% if session.get('username') %}
       <p>Xin chào, {{ session['username'] }} | <a href="{{ url_for('logout') }}">Đăng xuất</a></p>
     {% else %}
       <a href="{{ url_for('login') }}">Đăng nhập</a>
     {% endif %}
   </header>
+
   <nav>
-    <a href="/">Trang chủ</a>
-    <a href="/category/Hài">Hài</a>
-    <a href="/category/Hành Động">Hành động</a>
-    <a href="/category/Hoạt Hình">Hoạt hình</a>
-    <a href="/category/Ảnh">Ảnh</a>
+    <a href="{{ url_for('index') }}">Trang chủ</a>
+    <a href="{{ url_for('category', category_name='Hài') }}">Hài</a>
+    <a href="{{ url_for('category', category_name='Hành Động') }}">Hành động</a>
+    <a href="{{ url_for('category', category_name='Hoạt Hình') }}">Hoạt hình</a>
+    <a href="{{ url_for('category', category_name='Video') }}">Video</a>
     {% if session.get('is_admin') %}
-      <a href="/upload">Đăng video</a>
-      <a href="/pending">Duyệt video</a>
+      <a href="{{ url_for('upload') }}">Đăng video</a>
+      <a href="{{ url_for('pending') }}">Duyệt video</a>
     {% endif %}
   </nav>
+
   <main>
     {% block content %}{% endblock %}
   </main>
+
   <footer>
     <p>&copy; 2025 Phimnhanh.net</p>
   </footer>
->>>>>>> 5f32429e13e5746e0ce49ff36bc9bd937c7a9564
 </body>
 </html>
