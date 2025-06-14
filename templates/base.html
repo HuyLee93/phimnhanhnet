@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+<<<<<<< HEAD
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
@@ -71,5 +72,37 @@
     <div class="container">
         {% block content %}{% endblock %}
     </div>
+=======
+  <meta charset="UTF-8">
+  <title>Phimnhanh.net – Vừa nhanh vừa nét</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="background-image: url('{{ url_for('static', filename='ga.jpg') }}'); background-size: cover;">
+  <header>
+    <h1 class="slogan">Phimnhanh.net – Vừa nhanh vừa nét</h1>
+    {% if session.get('username') %}
+      <p>Xin chào, {{ session['username'] }} | <a href="{{ url_for('logout') }}">Đăng xuất</a></p>
+    {% else %}
+      <a href="{{ url_for('login') }}">Đăng nhập</a>
+    {% endif %}
+  </header>
+  <nav>
+    <a href="/">Trang chủ</a>
+    <a href="/category/Hài">Hài</a>
+    <a href="/category/Hành Động">Hành động</a>
+    <a href="/category/Hoạt Hình">Hoạt hình</a>
+    <a href="/category/Ảnh">Ảnh</a>
+    {% if session.get('is_admin') %}
+      <a href="/upload">Đăng video</a>
+      <a href="/pending">Duyệt video</a>
+    {% endif %}
+  </nav>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    <p>&copy; 2025 Phimnhanh.net</p>
+  </footer>
+>>>>>>> 5f32429e13e5746e0ce49ff36bc9bd937c7a9564
 </body>
 </html>

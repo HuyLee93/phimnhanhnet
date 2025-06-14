@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends "base.html" %}
 {% block content %}
   <h2>Danh sách video</h2>
@@ -12,3 +13,33 @@
     {% endif %}
   {% endfor %}
 {% endblock %}
+=======
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trang chủ Video</title>
+</head>
+<body>
+    <h1>Phim Nhanh – Vừa nhanh vừa nét</h1>
+
+    {% if session.get('username') %}
+        <p>Xin chào, {{ session['username'] }}!</p>
+        {% if session['role'] == 'admin' %}
+            <a href="{{ url_for('upload') }}">Đăng video</a> |
+        {% endif %}
+        <a href="{{ url_for('logout') }}">Đăng xuất</a>
+    {% else %}
+        <a href="{{ url_for('login') }}">Đăng nhập</a>
+    {% endif %}
+
+    <h2>Danh sách video đã duyệt</h2>
+    {% for video in videos %}
+        <div style="margin-bottom: 30px;">
+            <h3>{{ video.title }}</h3>
+            <iframe width="560" height="315" src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
+            <p>Đăng lúc: {{ video.created }}</p>
+        </div>
+    {% endfor %}
+</body>
+</html>
+>>>>>>> 5f32429e13e5746e0ce49ff36bc9bd937c7a9564

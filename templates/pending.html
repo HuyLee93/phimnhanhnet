@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Video chờ duyệt</h2>
+  <ul>
+    {% for v in videos %}
+      <li>
+        {{ v[1] }} -
+        <a href="{{ url_for('approve', vid=v[0]) }}">Duyệt</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

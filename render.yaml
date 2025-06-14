@@ -2,8 +2,14 @@ services:
   - type: web
     name: phimnhanhnet
     env: python
+<<<<<<< HEAD
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn app:app"
     envVars:
       - key: FLASK_ENV
         value: production
+=======
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    plan: free
+>>>>>>> 5f32429e13e5746e0ce49ff36bc9bd937c7a9564

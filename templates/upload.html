@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<<<<<<< HEAD
   <h2>Tải video mới</h2>
   <form method="post">
     <label>Tiêu đề:</label><input name="title"><br>
@@ -7,4 +8,34 @@
     <label>Thể loại:</label><input name="category"><br>
     <button>Tải lên</button>
   </form>
+=======
+  <h2>Đăng video</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <label>Tiêu đề:</label>
+    <input type="text" name="title" required>
+    <label>URL video (YouTube, Facebook, Vimeo...):</label>
+    <input type="url" name="url" required>
+    <label>Thể loại:</label>
+    <select name="category">
+        <option value="">Chọn thể loại</option>
+        <option value="hài">Hài</option>
+        <option value="hành động">Hành động</option>
+        <option value="hoạt hình">Hoạt hình</option>
+		<option value="Video">Video</option>
+		<option value="Video nhạc">Video nhạc</option>
+		<option value="Nhạc">Nhạc</option>
+		<option value="Tin tức">Tin tức</option>
+		<option value="Phim hay">Phim hay</option>
+		<option value="Phim cổ">Phim cổ</option>
+		<option value="Phim mới">Phim mới</option>
+        <option value="ảnh">Ảnh</option>
+    </select>
+    <label>Tải file lên:</label>
+    <input type="file" name="file">
+    <button type="submit">Đăng</button>
+  </form>
+  <p><a href="{{ url_for('index') }}">Quay về trang chủ</a></p>
+</body>
+</html>
+>>>>>>> 5f32429e13e5746e0ce49ff36bc9bd937c7a9564
 {% endblock %}
