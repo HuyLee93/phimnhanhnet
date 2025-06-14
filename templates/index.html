@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Danh sách video</h2>
-{% for video in videos %}
-    <div style="margin: 20px; border: 1px solid white; padding: 10px;">
+  <h2>Danh sách video mới nhất</h2>
+  {% if videos %}
+    {% for video in videos %}
+      <div class="video-card">
         <h3>{{ video.title }}</h3>
-        <div>
-            <iframe width="560" height="315" src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
-        </div>
-        <p>Thể loại: {{ video.category }}</p>
-    </div>
-{% else %}
+        <iframe width="100%" height="315" src="{{ video.url }}" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+        <p><strong>Thể loại:</strong> {{ video.category }}</p>
+      </div>
+    {% endfor %}
+  {% else %}
     <p>Chưa có video nào được duyệt.</p>
-{% endfor %}
+  {% endif %}
 {% endblock %}

@@ -1,6 +1,20 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 from datetime import datetime
+def convert_video_url(url_input):
+    if "youtube.com/watch?v=" in url_input:
+        video_id = url_input.split("watch?v=")[-1].split("&")[0]
+        return f"https://www.youtube.com/embed/{video_id}"
+    elif "youtu.be/" in url_input:
+        video_id = url_input.split("youtu.be/")[-1].split("?")[0]
+        return f"https://www.youtube.com/embed/{video_id}"
+    elif "facebook.com" in url_input:
+        return f"https://www.facebook.com/plugins/video.php?href={url_input}&show_text=0&width=560"
+    elif "vimeo.com/" in url_input:
+        video_id = url_input.split("vimeo.com/")[-1].split("?")[0]
+        return f"https://player.vimeo.com/video/{video_id}"
+    else:
+        return url_input
 
 app = Flask(__name__)
 app.secret_key = 'lekoy93_secret_key'
@@ -44,15 +58,16 @@ def logout():
 def upload():
     if request.method == 'POST':
         title = request.form['title']
-        url = request.form['url']
+        url = convert_video_url(request.form['url'])  # dùng hàm mới
         category = request.form['category']
         conn = get_db_connection()
         conn.execute("INSERT INTO videos (title, url, category, approved, uploader) VALUES (?, ?, ?, 0, ?)",
                      (title, url, category, 'guest'))
         conn.commit()
         conn.close()
-        return redirect(url_for('upload'))  # Giữ nguyên trang để thông báo "đã gửi thành công"
+        return redirect(url_for('index'))
     return render_template('upload.html')
+
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
