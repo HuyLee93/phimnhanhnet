@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Video thể loại: {{ category }}</h2>
+  {% for video in videos %}
+    {% if video.category == category and video.approved %}
+    <div class="video-card">
+      <h3>{{ video.title }}</h3>
+      <iframe width="100%" height="315" src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
+    </div>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

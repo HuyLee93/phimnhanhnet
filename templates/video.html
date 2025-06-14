@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>{{ video.title }}</h2>
+  <iframe width="100%" height="400" src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
+  <p>Thể loại: {{ video.category }}</p>
+  <p>Like: {{ video.likes }} | Dislike: {{ video.dislikes }}</p>
+  <form method="post">
+    <button name="action" value="like">👍 Like</button>
+    <button name="action" value="dislike">👎 Dislike</button>
+  </form>
+  <h3>Bình luận</h3>
+  {% for c in comments %}
+    <p><strong>{{ c.user }}:</strong> {{ c.text }}</p>
+  {% endfor %}
+  <form method="post">
+    <input type="text" name="user" placeholder="Tên của bạn"><br>
+    <textarea name="comment" placeholder="Nội dung"></textarea><br>
+    <button name="action" value="comment">Gửi bình luận</button>
+  </form>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Tải video mới</h2>
+  <form method="post">
+    <label>Tiêu đề:</label><input name="title"><br>
+    <label>Link nhúng iframe (YouTube, Facebook...):</label><input name="url"><br>
+    <label>Thể loại:</label><input name="category"><br>
+    <button>Tải lên</button>
+  </form>
+{% endblock %}

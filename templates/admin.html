@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Duyệt video chưa được phê duyệt</h2>
+  {% for video in videos %}
+    {% if not video.approved %}
+    <div class="video-card">
+      <h3>{{ video.title }}</h3>
+      <iframe width="100%" height="315" src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
+      <form method="post" action="/approve/{{ loop.index0 }}">
+        <button name="action" value="approve">Duyệt</button>
+        <button name="action" value="delete">Xóa</button>
+      </form>
+    </div>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
