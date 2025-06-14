@@ -3,11 +3,13 @@
 {% block content %}
   <h2>Thể loại: {{ category }}</h2>
   {% for video in videos %}
-    <div>
+    <div class="video-card">
       <h3>{{ video.title }}</h3>
-      <iframe src="{{ video.url }}" width="560" height="315" frameborder="0" allowfullscreen></iframe>
+      <div>
+        <iframe width="100%" height="315" src="{{ video.url | replace('watch?v=', 'embed/') }}" frameborder="0" allowfullscreen></iframe>
+      </div>
     </div>
   {% else %}
-    <p>Không có video nào trong thể loại này.</p>
+    <p>Chưa có video nào trong thể loại này.</p>
   {% endfor %}
 {% endblock %}

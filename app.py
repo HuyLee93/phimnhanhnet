@@ -72,6 +72,12 @@ def admin():
     videos = conn.execute("SELECT * FROM videos ORDER BY id DESC").fetchall()
     conn.close()
     return render_template('admin.html', videos=videos)
+@app.route('/category/<cat>')
+def category(cat):
+    conn = get_db_connection()
+    videos = conn.execute("SELECT * FROM videos WHERE approved = 1 AND category = ? ORDER BY id DESC", (cat,)).fetchall()
+    conn.close()
+    return render_template('category.html', videos=videos, category=cat)
 
 if __name__ == '__main__':
     init_db()
