@@ -41,6 +41,9 @@ def convert_url_to_embed(url):
 def index():
     videos = load_data()
     return render_template('index.html', videos=videos)
+@app.route('/login')
+def login():
+    return "<h2>Trang đăng nhập đang phát triển...</h2>"
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
